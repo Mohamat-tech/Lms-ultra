@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium iOS LMS</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-blur: rgba(255, 255, 255, 0.4);
+            --bg-app: #f5f5f7;
+            --text-main: #1d1d1f;
+            --accent-color: #0071e3;
+            --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+            --border-glass: rgba(255, 255, 255, 0.4);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-blur: rgba(28, 28, 30, 0.4);
+                --bg-app: #000000;
+                --text-main: #f5f5f7;
+                --accent-color: #0a84ff;
+                --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+                --border-glass: rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-app);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Effet Liquid Glass iOS */
+        .glass-card {
+            background: var(--bg-blur);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 25px;
+            transition: transform 0.2s ease;
+        }
+
+        .glass-card:hover {
+            transform: scale(1.01);
+        }
+
+        h1, h2 {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            background: var(--accent-color);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .badge-pro {
+            background: linear-gradient(135deg, #ff3b30, #ff9500);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        /* Section Commentaire / Ultimatum */
+        .ultimatum {
+            border-left: 5px solid #ff3b30;
+            background: rgba(255, 59, 48, 0.1);
+            padding: 15px;
+            border-radius: 0 12px 12px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h1>iOS Academic LMS</h1>
+        <button id="themeToggle" style="width: auto; padding: 8px 16px;">🌓 Mode</button>
+    </header>
+
+    <div class="grid">
+        <div class="glass-card">
+            <h2>Espace Enseignant / Académie</h2>
+            <form id="courseForm">
+                <input type="text" placeholder="Titre du cours" required>
+                <textarea placeholder="Description du cours"></textarea>
+                <input type="url" placeholder="Lien Vidéo (MP4 / YouTube)">
+                <input type="url" placeholder="Lien d'appel en ligne (Google Meet, Zoom)">
+                <button type="submit">Ajouter et Diffuser le Cours</button>
+            </form>
+        </div>
+
+        <div class="glass-card">
+            <h2>Vérification Compte Pro <span class="badge-pro">Requis</span></h2>
+            <p style="font-size: 14px; opacity: 0.8;">Téléversez votre diplôme ou certification pour débloquer l'ajout de cours publics.</p>
+            <form id="uploadCertifForm" enctype="multipart/form-data">
+                <input type="file" name="certification" accept=".pdf, .png, .jpg, .jpeg" required>
+                <button type="submit">Soumettre pour Approbation</button>
+            </form>
+            <div id="uploadStatus" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+
+        <div class="glass-card">
+            <h2>Mon Évolution & Relevé de Notes</h2>
+            <div style="max-width: 100%; height: 200px;">
+                <canvas id="evolutionChart"></canvas>
+            </div>
+            <div class="ultimatum" style="margin-top: 15px;">
+                <strong>⚠️ Section Commentaire (Ultimatum Professeur) :</strong>
+                <p id="ultimatumText">Vous devez valider l'exercice d'algorithmique avant demain 16h00 sous peine de pénalité.</p>
+            </div>
+            <button onclick="window.print()" style="margin-top: 15px; background: #34c759;">Enregistrer le Relevé en PDF</button>
+        </div>
+    </div>
+
+    <script>
+        // Gestion Thème Écran (Manuel + Adaptation Système native via CSS)
+        const toggleBtn = document.getElementById('themeToggle');
+        toggleBtn.addEventListener('click', () => {
+            document.body.style.background = document.body.style.background === 'rgb(0, 0, 0)' ? '#f5f5f7' : '#000000';
+        });
+
+        // Envoi asynchrone AJAX (Fetch) pour la certification sans rechargement
+        document.getElementById('uploadCertifForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const statusDiv = document.getElementById('uploadStatus');
+            statusDiv.innerHTML = "Traitement en cours...";
+
+            fetch('upload_certif.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    statusDiv.style.color = '#34c759';
+                    statusDiv.innerHTML = data.message;
+                } else {
+                    statusDiv.style.color = '#ff3b30';
+                    statusDiv.innerHTML = data.message;
+                }
+            })
+            .catch(error => {
+                statusDiv.style.color = '#ff3b30';
+                statusDiv.innerHTML = "Erreur de communication avec le serveur.";
+            });
+        });
+
+        // Initialisation du Graphique d'Évolution iOS Style (Pourcentages / Notes)
+        const ctx = document.getElementById('evolutionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Éval 1', 'Éval 2', 'Éval 3', 'Éval 4'],
+                datasets: [{
+                    label: 'Progression (%)',
+                    data: [45, 60, 55, 85],
+                    borderColor: '#0071e3',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#fff',
+                    pointBorderWidth: 3,
+                    tension: 0.4, // Rend la courbe fluide/liquide
+                    fill: true,
+                    backgroundColor: 'rgba(0, 113, 227, 0.1)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { min: 0, max: 100 } }
+            }
+        });
+    </script>
+</body>
+</html>
