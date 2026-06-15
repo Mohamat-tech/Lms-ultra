@@ -1,13 +1,7 @@
 {
   "functions": {
-    "api/**/*.php": {
+    "api/*.php": {
       "runtime": "vercel-php@0.7.1"
     }
-  },
-  "routes": [
-    {
-      "src": "/api/upload_certif.php",
-      "dest": "/api/upload_certif.php"
-    }
-  ]
+  }
 }
