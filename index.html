@@ -1,212 +1,1621 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium iOS LMS</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --bg-blur: rgba(255, 255, 255, 0.4);
-            --bg-app: #f5f5f7;
-            --text-main: #1d1d1f;
-            --accent-color: #0071e3;
-            --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
-            --border-glass: rgba(255, 255, 255, 0.4);
-        }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<title>EduVault — iOS Academic LMS</title>
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+/* ╔══════════════════════════════════════╗
+   ║  DESIGN TOKENS — iOS + OpenClassrooms ║
+   ╚══════════════════════════════════════╝ */
+:root {
+  /* iOS Blue palette */
+  --blue:        #007AFF;
+  --blue-dark:   #0051D5;
+  --blue-light:  #4DA3FF;
+  --blue-bg:     #EBF4FF;
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-blur: rgba(28, 28, 30, 0.4);
-                --bg-app: #000000;
-                --text-main: #f5f5f7;
-                --accent-color: #0a84ff;
-                --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-                --border-glass: rgba(255, 255, 255, 0.1);
-            }
-        }
+  /* Accent colors */
+  --green:       #34C759;
+  --green-bg:    #E8F8ED;
+  --orange:      #FF9500;
+  --orange-bg:   #FFF3E0;
+  --red:         #FF3B30;
+  --red-bg:      #FFEBEA;
+  --purple:      #AF52DE;
+  --purple-bg:   #F5EEFF;
+  --teal:        #5AC8FA;
+  --yellow:      #FFCC00;
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--bg-app);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
+  /* Neutral */
+  --white:       #FFFFFF;
+  --bg:          #F2F2F7;
+  --bg2:         #FFFFFF;
+  --card:        #FFFFFF;
+  --border:      #E5E5EA;
+  --border2:     #D1D1D6;
+  --text:        #1C1C1E;
+  --text2:       #3A3A3C;
+  --text3:       #636366;
+  --text4:       #8E8E93;
+  --text5:       #AEAEB2;
 
-        /* Effet Liquid Glass iOS */
-        .glass-card {
-            background: var(--bg-blur);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-glass);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 25px;
-            transition: transform 0.2s ease;
-        }
+  /* Sidebar */
+  --sidebar-w:   256px;
+  --header-h:    60px;
 
-        .glass-card:hover {
-            transform: scale(1.01);
-        }
+  /* Shape */
+  --r-sm:        8px;
+  --r:           12px;
+  --r-lg:        16px;
+  --r-xl:        20px;
+  --r-2xl:       24px;
 
-        h1, h2 {
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
+  /* Shadow */
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+  --shadow:      0 4px 16px rgba(0,0,0,.08), 0 1px 4px rgba(0,0,0,.04);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.06);
+  --shadow-xl:   0 20px 60px rgba(0,0,0,.12);
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
+  --transition:  .2s cubic-bezier(.4,0,.2,1);
+  --font:        'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+}
 
-        input, textarea, button {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 12px;
-            border: 1px solid var(--border-glass);
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-            box-sizing: border-box;
-            font-size: 16px;
-        }
+[data-theme="dark"] {
+  --bg:          #000000;
+  --bg2:         #1C1C1E;
+  --card:        #2C2C2E;
+  --border:      #38383A;
+  --border2:     #48484A;
+  --text:        #FFFFFF;
+  --text2:       #EBEBF5;
+  --text3:       #EBEBF599;
+  --text4:       #8E8E93;
+  --text5:       #636366;
+  --blue-bg:     #0A1929;
+  --green-bg:    #0A1F0F;
+  --orange-bg:   #1F160A;
+  --red-bg:      #1F0A0A;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,.4);
+  --shadow:      0 4px 16px rgba(0,0,0,.5);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,.6);
+}
 
-        button {
-            background: var(--accent-color);
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
-        }
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+button{cursor:pointer;border:none;background:none;font-family:inherit;-webkit-tap-highlight-color:transparent}
+input,textarea,select{font-family:inherit;outline:none}
+ul{list-style:none}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
 
-        button:active {
-            transform: scale(0.98);
-        }
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.65rem 1.3rem;border-radius:var(--r);font-size:.875rem;font-weight:600;letter-spacing:-.01em;transition:all var(--transition);white-space:nowrap;cursor:pointer}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(0,122,255,.35)}
+.btn-blue:hover{background:var(--blue-dark);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,122,255,.4)}
+.btn-blue:active{transform:translateY(0);box-shadow:none}
+.btn-green{background:var(--green);color:#fff;box-shadow:0 2px 8px rgba(52,199,89,.3)}
+.btn-green:hover{filter:brightness(1.05);transform:translateY(-1px)}
+.btn-red{background:var(--red);color:#fff}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--text2)}
+.btn-outline:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.btn-ghost{background:transparent;color:var(--text3)}
+.btn-ghost:hover{background:var(--bg);color:var(--text)}
+.btn-sm{padding:.45rem 1rem;font-size:.8rem;border-radius:var(--r-sm)}
+.btn-lg{padding:.8rem 1.8rem;font-size:1rem;border-radius:var(--r-lg)}
+.btn-full{width:100%}
+.btn-icon{padding:.55rem;border-radius:var(--r-sm)}
 
-        .badge-pro {
-            background: linear-gradient(135deg, #ff3b30, #ff9500);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 12px;
-            display: inline-block;
-        }
+/* ── CARDS ── */
+.card{background:var(--card);border-radius:var(--r-xl);box-shadow:var(--shadow-sm);border:1px solid var(--border)}
+.card:hover{box-shadow:var(--shadow)}
+.card-pad{padding:1.5rem}
+.card-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-body{padding:1.5rem}
+.card-footer{padding:1rem 1.5rem;border-top:1px solid var(--border)}
 
-        /* Section Commentaire / Ultimatum */
-        .ultimatum {
-            border-left: 5px solid #ff3b30;
-            background: rgba(255, 59, 48, 0.1);
-            padding: 15px;
-            border-radius: 0 12px 12px 0;
-        }
-    </style>
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .65rem;border-radius:99px;font-size:.72rem;font-weight:700;letter-spacing:.01em}
+.badge-blue{background:var(--blue-bg);color:var(--blue)}
+.badge-green{background:var(--green-bg);color:var(--green)}
+.badge-orange{background:var(--orange-bg);color:var(--orange)}
+.badge-red{background:var(--red-bg);color:var(--red)}
+.badge-purple{background:var(--purple-bg);color:var(--purple)}
+.badge-gray{background:var(--bg);color:var(--text4)}
+
+/* ── FORMS ── */
+.form-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
+.form-label{font-size:.8rem;font-weight:600;color:var(--text3);letter-spacing:.01em}
+.form-control{padding:.7rem 1rem;border:1.5px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--text);font-size:.9rem;transition:all var(--transition)}
+.form-control:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,122,255,.12)}
+.form-control::placeholder{color:var(--text5)}
+textarea.form-control{resize:vertical;min-height:90px}
+select.form-control{cursor:pointer}
+
+/* ── LAYOUT ── */
+.app{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  width:var(--sidebar-w);min-height:100vh;
+  background:var(--card);border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;z-index:200;
+  display:flex;flex-direction:column;
+  transition:transform var(--transition);
+}
+.sidebar-head{
+  height:var(--header-h);padding:0 1.2rem;
+  display:flex;align-items:center;gap:.75rem;
+  border-bottom:1px solid var(--border);
+}
+.sidebar-logo{
+  display:flex;align-items:center;gap:.6rem;
+}
+.logo-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--blue);display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:.85rem;font-weight:800;flex-shrink:0;
+}
+.logo-text{font-size:1rem;font-weight:800;color:var(--text);letter-spacing:-.02em}
+.logo-text span{color:var(--blue)}
+.sidebar-nav{flex:1;padding:.75rem .75rem;overflow-y:auto;display:flex;flex-direction:column;gap:.1rem}
+.nav-section{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text5);padding:.75rem .6rem .3rem}
+.nav-link{
+  display:flex;align-items:center;gap:.75rem;padding:.65rem .8rem;
+  border-radius:var(--r);font-size:.875rem;font-weight:500;color:var(--text3);
+  cursor:pointer;transition:all var(--transition);position:relative;
+}
+.nav-link:hover{background:var(--bg);color:var(--text)}
+.nav-link.active{background:var(--blue-bg);color:var(--blue);font-weight:600}
+.nav-link .icon{width:18px;text-align:center;font-size:.9rem;flex-shrink:0}
+.nav-link .lbl{flex:1}
+.nav-link .pill{
+  background:var(--blue);color:#fff;font-size:.65rem;font-weight:700;
+  padding:.1rem .4rem;border-radius:99px;min-width:18px;text-align:center;
+}
+.nav-link .pill.red{background:var(--red)}
+.sidebar-user{
+  padding:.75rem 1rem;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:.75rem;cursor:pointer;
+  transition:background var(--transition);
+}
+.sidebar-user:hover{background:var(--bg)}
+.s-avatar{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:.8rem;
+}
+.s-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-role{font-size:.72rem;color:var(--text4);margin-top:.05rem}
+.sidebar-role-pills{padding:.5rem 1rem .75rem;display:flex;gap:.3rem;flex-wrap:wrap}
+.role-pill{
+  padding:.25rem .65rem;border-radius:99px;font-size:.7rem;font-weight:600;
+  background:var(--bg);color:var(--text3);cursor:pointer;border:1.5px solid var(--border);
+  transition:all var(--transition);
+}
+.role-pill:hover,.role-pill.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* HEADER */
+.header{
+  position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--header-h);
+  background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);z-index:100;
+  display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;
+  transition:left var(--transition),background var(--transition);
+}
+[data-theme="dark"] .header{background:rgba(28,28,30,.85)}
+.header-left{display:flex;align-items:center;gap:.75rem}
+.hamburger{
+  display:none;width:36px;height:36px;border-radius:var(--r-sm);
+  align-items:center;justify-content:center;color:var(--text3);
+  background:transparent;transition:all var(--transition);
+}
+.hamburger:hover{background:var(--bg);color:var(--text)}
+.breadcrumb{display:flex;align-items:center;gap:.4rem;font-size:.85rem}
+.breadcrumb .bc-parent{color:var(--text4)}
+.breadcrumb .bc-sep{color:var(--text5)}
+.breadcrumb .bc-current{color:var(--text);font-weight:600}
+.header-right{display:flex;align-items:center;gap:.5rem}
+.h-search{
+  display:flex;align-items:center;gap:.5rem;
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:var(--r);padding:.45rem .9rem;transition:all var(--transition);
+}
+.h-search:focus-within{border-color:var(--blue);background:var(--card);box-shadow:0 0 0 3px rgba(0,122,255,.1)}
+.h-search input{background:transparent;color:var(--text);font-size:.85rem;width:200px}
+.h-search input::placeholder{color:var(--text5)}
+.h-btn{
+  width:36px;height:36px;border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text3);background:transparent;position:relative;transition:all var(--transition);
+}
+.h-btn:hover{background:var(--bg);color:var(--text)}
+.h-notif-dot{
+  position:absolute;top:5px;right:5px;width:8px;height:8px;
+  background:var(--red);border-radius:50%;border:2px solid var(--card);
+}
+
+/* THEME TOGGLE */
+.theme-btn{
+  display:flex;align-items:center;gap:.4rem;
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:var(--r);padding:.35rem .75rem;
+  font-size:.8rem;font-weight:600;color:var(--text2);
+  cursor:pointer;transition:all var(--transition);
+}
+.theme-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);padding-top:var(--header-h);min-height:100vh;transition:margin var(--transition)}
+.page{padding:2rem 1.75rem;max-width:1280px}
+
+/* ── LANDING ── */
+.landing{margin-left:0!important;background:var(--bg2)}
+.landing .page{max-width:100%;padding:0}
+.land-header{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  height:64px;background:rgba(255,255,255,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);display:flex;align-items:center;
+  justify-content:space-between;padding:0 2rem;
+}
+[data-theme="dark"] .land-header{background:rgba(0,0,0,.9)}
+.land-nav{display:flex;align-items:center;gap:.2rem}
+.land-nav a{padding:.45rem .9rem;border-radius:var(--r-sm);font-size:.875rem;font-weight:500;color:var(--text3);transition:all var(--transition)}
+.land-nav a:hover{color:var(--text);background:var(--bg)}
+.land-actions{display:flex;align-items:center;gap:.5rem}
+
+/* HERO */
+.hero{
+  padding:9rem 2rem 5rem;text-align:center;
+  background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,122,255,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:var(--blue-bg);color:var(--blue);border:1px solid rgba(0,122,255,.2);
+  border-radius:99px;padding:.3rem .9rem;font-size:.78rem;font-weight:700;
+  margin-bottom:1.5rem;letter-spacing:.02em;
+}
+.hero-title{
+  font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;
+  letter-spacing:-.04em;line-height:1.05;color:var(--text);margin-bottom:1.2rem;
+}
+.hero-title .hl{color:var(--blue)}
+.hero-sub{
+  font-size:1.15rem;color:var(--text3);max-width:580px;margin:0 auto 2.5rem;
+  line-height:1.7;font-weight:400;
+}
+.hero-cta{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:4rem}
+.hero-stats{
+  display:inline-flex;gap:0;background:var(--card);
+  border:1px solid var(--border);border-radius:var(--r-xl);
+  box-shadow:var(--shadow-sm);overflow:hidden;
+}
+.h-stat{padding:1.2rem 2rem;text-align:center;border-right:1px solid var(--border)}
+.h-stat:last-child{border-right:none}
+.h-stat-num{font-size:1.6rem;font-weight:800;color:var(--text);letter-spacing:-.03em}
+.h-stat-lbl{font-size:.75rem;color:var(--text4);margin-top:.15rem;white-space:nowrap}
+
+/* FEATURES */
+.feat-section{padding:5rem 2rem;background:var(--bg)}
+.feat-inner{max-width:1100px;margin:0 auto}
+.section-eyebrow{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:.6rem}
+.section-title{font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-.03em;color:var(--text);margin-bottom:.75rem}
+.section-sub{font-size:.95rem;color:var(--text3);line-height:1.7;max-width:520px}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem;margin-top:3rem}
+.feat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);
+  padding:1.75rem;transition:all var(--transition);
+}
+.feat-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
+.feat-icon{
+  width:48px;height:48px;border-radius:14px;margin-bottom:1.1rem;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+}
+.fi-blue{background:var(--blue-bg);color:var(--blue)}
+.fi-green{background:var(--green-bg);color:var(--green)}
+.fi-orange{background:var(--orange-bg);color:var(--orange)}
+.fi-red{background:var(--red-bg);color:var(--red)}
+.fi-purple{background:var(--purple-bg);color:var(--purple)}
+.fi-teal{background:rgba(90,200,250,.12);color:var(--teal)}
+.feat-title{font-size:.95rem;font-weight:700;margin-bottom:.4rem;color:var(--text)}
+.feat-desc{font-size:.85rem;color:var(--text3);line-height:1.6}
+
+/* ── PAGE HEADER ── */
+.pg-header{margin-bottom:2rem}
+.pg-title{font-size:1.75rem;font-weight:800;letter-spacing:-.03em;color:var(--text);margin-bottom:.2rem}
+.pg-sub{font-size:.875rem;color:var(--text4)}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);
+  padding:1.25rem 1.4rem;transition:all var(--transition);
+}
+.stat-card:hover{box-shadow:var(--shadow)}
+.stat-icon-wrap{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:.9rem;
+}
+.stat-val{font-size:1.75rem;font-weight:800;letter-spacing:-.03em;color:var(--text)}
+.stat-lbl{font-size:.78rem;color:var(--text4);margin-top:.15rem}
+.stat-delta{font-size:.75rem;margin-top:.2rem;display:flex;align-items:center;gap:.2rem}
+.delta-up{color:var(--green)}
+.delta-down{color:var(--red)}
+.delta-neutral{color:var(--text4)}
+
+/* ── COURSE CARDS (OpenClassrooms style) ── */
+.courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem}
+.oc-course{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);
+  overflow:hidden;cursor:pointer;transition:all var(--transition);
+}
+.oc-course:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px)}
+.oc-thumb{height:148px;position:relative;overflow:hidden;flex-shrink:0}
+.oc-thumb-inner{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:2.5rem;
+}
+.oc-thumb-tag{
+  position:absolute;top:.65rem;left:.65rem;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(6px);
+  color:#fff;padding:.15rem .55rem;border-radius:99px;font-size:.68rem;font-weight:600;
+}
+.oc-thumb-duration{
+  position:absolute;bottom:.65rem;right:.65rem;
+  background:rgba(0,0,0,.7);color:#fff;padding:.15rem .5rem;
+  border-radius:6px;font-size:.68rem;font-weight:600;display:flex;align-items:center;gap:.3rem;
+}
+.oc-body{padding:1.1rem 1.2rem}
+.oc-cat{font-size:.72rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.35rem}
+.oc-title{font-size:.95rem;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:.3rem}
+.oc-author{font-size:.78rem;color:var(--text4);margin-bottom:.8rem}
+.oc-progress-wrap{margin-bottom:.4rem}
+.oc-progress-bar{height:4px;background:var(--bg);border-radius:99px;overflow:hidden}
+.oc-progress-fill{height:100%;border-radius:99px;background:var(--blue)}
+.oc-progress-label{font-size:.72rem;color:var(--text4);margin-top:.3rem}
+.oc-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.75rem 1.2rem;border-top:1px solid var(--border);
+}
+.oc-rating{display:flex;align-items:center;gap:.25rem;font-size:.78rem;font-weight:600;color:var(--orange)}
+.oc-students{font-size:.75rem;color:var(--text4)}
+
+/* ── GRADES TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:var(--r-xl);border:1px solid var(--border)}
+.tbl{width:100%;border-collapse:collapse;background:var(--card)}
+.tbl th{
+  padding:.85rem 1.25rem;text-align:left;font-size:.72rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.07em;color:var(--text4);
+  background:var(--bg);border-bottom:1px solid var(--border);white-space:nowrap;
+}
+.tbl td{padding:.9rem 1.25rem;font-size:.875rem;border-bottom:1px solid var(--border)}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:var(--bg)}
+.score-chip{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:50px;padding:.25rem .6rem;border-radius:var(--r-sm);
+  font-weight:700;font-size:.875rem;font-family:'SF Mono','Courier New',monospace;
+}
+.score-a{background:var(--green-bg);color:var(--green)}
+.score-b{background:var(--blue-bg);color:var(--blue)}
+.score-c{background:var(--orange-bg);color:var(--orange)}
+.score-d{background:var(--red-bg);color:var(--red)}
+.ap-chip{
+  font-size:.78rem;padding:.25rem .65rem;border-radius:var(--r-sm);
+  border-left:2.5px solid;font-style:italic;
+}
+.ap-pos{background:var(--green-bg);color:#1A7A38;border-color:var(--green)}
+.ap-neg{background:var(--red-bg);color:#C41E18;border-color:var(--red)}
+.decision-tag{
+  display:inline-flex;align-items:center;gap:.3rem;
+  padding:.22rem .65rem;border-radius:99px;font-size:.72rem;font-weight:700;
+}
+.dt-pass{background:var(--green-bg);color:var(--green)}
+.dt-fail{background:var(--red-bg);color:var(--red)}
+.dt-pending{background:var(--orange-bg);color:var(--orange)}
+
+/* ── RELEVÉ ── */
+.releve-wrap{max-width:820px;margin:0 auto;background:var(--card);border:1px solid var(--border);border-radius:var(--r-2xl);overflow:hidden;box-shadow:var(--shadow-lg)}
+.releve-top{background:var(--blue);padding:2rem 2.5rem;color:#fff;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.releve-uni{font-size:1.2rem;font-weight:800;letter-spacing:-.02em}
+.releve-subtitle{opacity:.75;font-size:.82rem;margin-top:.25rem}
+.releve-stamp{font-size:4rem;font-weight:900;opacity:.07;letter-spacing:-.05em}
+.releve-body{padding:2rem 2.5rem}
+.releve-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem 2rem;background:var(--bg);border-radius:var(--r-lg);padding:1.1rem 1.4rem;margin-bottom:1.75rem}
+.ri-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text4)}
+.ri-value{font-size:.9rem;font-weight:600;color:var(--text);margin-top:.15rem}
+.releve-tbl{width:100%;border-collapse:collapse}
+.releve-tbl th{background:var(--blue);color:#fff;padding:.6rem 1rem;font-size:.75rem;font-weight:600;text-align:center}
+.releve-tbl th:first-child{text-align:left}
+.releve-tbl td{padding:.65rem 1rem;font-size:.83rem;border-bottom:1px solid var(--border);text-align:center}
+.releve-tbl td:first-child{text-align:left;font-weight:500}
+.releve-tbl tbody tr:hover td{background:var(--bg)}
+.releve-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-top:1.5rem}
+.rs-box{background:var(--bg);border-radius:var(--r-lg);padding:1.1rem;text-align:center}
+.rs-val{font-size:1.6rem;font-weight:800;letter-spacing:-.03em;color:var(--blue)}
+.rs-lbl{font-size:.72rem;color:var(--text4);margin-top:.2rem}
+.releve-footer{border-top:1px solid var(--border);padding:1.5rem 2.5rem;display:flex;justify-content:space-between;align-items:center;background:var(--bg)}
+.sig-block{text-align:center}
+.sig-line{width:110px;height:1px;background:var(--border2);margin:1.2rem auto .35rem}
+.sig-lbl{font-size:.72rem;color:var(--text4)}
+.releve-confidential{
+  display:flex;align-items:center;gap:.6rem;
+  background:var(--orange-bg);border:1px solid rgba(255,149,0,.25);
+  border-radius:var(--r);padding:.75rem 1rem;font-size:.82rem;color:var(--text2);
+  margin-bottom:1.5rem;
+}
+.releve-confidential i{color:var(--orange);flex-shrink:0}
+
+/* ── COMMENTS ── */
+.comment-layout{display:grid;grid-template-columns:280px 1fr;gap:1.25rem}
+.conv-list{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
+.conv-list-head{padding:.9rem 1.1rem;border-bottom:1px solid var(--border);font-size:.85rem;font-weight:700}
+.conv-item{
+  display:flex;align-items:center;gap:.75rem;padding:.8rem 1.1rem;
+  cursor:pointer;transition:background var(--transition);border-bottom:1px solid var(--border);
+}
+.conv-item:last-child{border-bottom:none}
+.conv-item:hover{background:var(--bg)}
+.conv-item.active{background:var(--blue-bg)}
+.conv-av{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem}
+.conv-info{flex:1;min-width:0}
+.conv-name{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-preview{font-size:.75rem;color:var(--text4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.1rem}
+.conv-badge{background:var(--red);color:#fff;font-size:.65rem;font-weight:700;padding:.1rem .4rem;border-radius:99px}
+.chat-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;display:flex;flex-direction:column}
+.chat-head{padding:.9rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.chat-title{font-size:.9rem;font-weight:700}
+.ultimatum-pill{display:inline-flex;align-items:center;gap:.3rem;background:var(--red-bg);color:var(--red);border:1px solid rgba(255,59,48,.2);padding:.2rem .65rem;border-radius:99px;font-size:.7rem;font-weight:700}
+.chat-msgs{flex:1;padding:1.1rem;overflow-y:auto;max-height:340px;display:flex;flex-direction:column;gap:.75rem}
+.msg{display:flex;gap:.6rem}
+.msg.right{flex-direction:row-reverse}
+.msg-av{width:30px;height:30px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.68rem}
+.msg-bubble{max-width:75%}
+.msg-text{
+  padding:.6rem .9rem;border-radius:14px;font-size:.85rem;line-height:1.5;
+  background:var(--bg);color:var(--text);
+}
+.msg.right .msg-text{background:var(--blue);color:#fff;border-radius:14px 14px 2px 14px}
+.msg-text.ultimatum-msg{background:var(--red-bg);border:1px solid rgba(255,59,48,.2);color:var(--text);border-radius:14px 14px 14px 2px}
+.msg-meta{font-size:.68rem;color:var(--text5);margin-top:.25rem}
+.msg.right .msg-meta{text-align:right}
+.chat-input-wrap{padding:.8rem 1.1rem;border-top:1px solid var(--border);display:flex;gap:.6rem;align-items:flex-end}
+.chat-input-wrap textarea{flex:1;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);padding:.55rem .8rem;font-size:.85rem;color:var(--text);resize:none;height:38px;line-height:1.4;transition:all var(--transition)}
+.chat-input-wrap textarea:focus{border-color:var(--blue);background:var(--card)}
+.chat-input-actions{display:flex;gap:.3rem;align-items:center;flex-wrap:wrap}
+
+/* ── MEET ── */
+.meet-hero{background:var(--blue);border-radius:var(--r-2xl);padding:2rem;color:#fff;position:relative;overflow:hidden}
+.meet-hero::after{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.06)}
+.meet-title{font-size:1.2rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.3rem}
+.meet-sub{opacity:.7;font-size:.85rem;margin-bottom:1.2rem}
+.meet-participants-row{display:flex;margin-bottom:1.2rem}
+.mp{width:32px;height:32px;border-radius:50%;border:2px solid rgba(255,255,255,.5);background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;margin-left:-8px}
+.mp:first-child{margin-left:0}
+.mp-more{background:rgba(255,255,255,.3)}
+.meet-btns{display:flex;gap:.6rem;flex-wrap:wrap}
+.meet-btn-pri{background:#fff;color:var(--blue);border:none;padding:.55rem 1.2rem;border-radius:var(--r);font-size:.85rem;font-weight:700;cursor:pointer;transition:all var(--transition)}
+.meet-btn-pri:hover{background:rgba(255,255,255,.9)}
+.meet-btn-sec{background:rgba(255,255,255,.15);color:#fff;border:1.5px solid rgba(255,255,255,.3);padding:.5rem 1.1rem;border-radius:var(--r);font-size:.85rem;font-weight:600;cursor:pointer;transition:all var(--transition)}
+.meet-btn-sec:hover{background:rgba(255,255,255,.25)}
+
+/* ── VIDEO PLAYER ── */
+.video-player{background:#000;border-radius:var(--r-xl);overflow:hidden;aspect-ratio:16/9;position:relative}
+.video-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.75rem;background:linear-gradient(135deg,#0D0D2B,#0D2B1A)}
+.video-play-btn{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;cursor:pointer;transition:all var(--transition)}
+.video-play-btn:hover{background:rgba(255,255,255,.25);transform:scale(1.05)}
+.video-title{color:rgba(255,255,255,.7);font-size:.85rem}
+.video-controls-bar{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:1.5rem .9rem .8rem;display:flex;gap:.75rem;align-items:center}
+.vc-btn{color:#fff;opacity:.85;font-size:.9rem;padding:.3rem;transition:opacity var(--transition)}
+.vc-btn:hover{opacity:1}
+.vc-progress{flex:1;height:3px;background:rgba(255,255,255,.25);border-radius:99px;cursor:pointer}
+.vc-fill{height:100%;width:35%;background:var(--blue);border-radius:99px}
+.vc-time{color:rgba(255,255,255,.75);font-size:.72rem;font-family:monospace;white-space:nowrap}
+
+/* ── UPLOAD ZONE ── */
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r-lg);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:all var(--transition)}
+.upload-zone:hover{border-color:var(--blue);background:var(--blue-bg)}
+.upload-icon{font-size:2.2rem;color:var(--text5);margin-bottom:.6rem}
+.upload-text{font-weight:600;font-size:.9rem;color:var(--text2);margin-bottom:.25rem}
+.upload-sub{font-size:.78rem;color:var(--text4)}
+
+/* ── TABS ── */
+.tabs-bar{display:flex;gap:0;border-bottom:1.5px solid var(--border);margin-bottom:1.75rem}
+.tab-btn{padding:.65rem 1.25rem;font-size:.875rem;font-weight:600;color:var(--text4);cursor:pointer;position:relative;transition:color var(--transition);background:none;border:none}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--blue)}
+.tab-btn.active::after{content:'';position:absolute;bottom:-1.5px;left:0;right:0;height:2px;background:var(--blue);border-radius:99px}
+.tab-pane{display:none}.tab-pane.active{display:block}
+
+/* ── CERT STEPS ── */
+.cert-step{display:flex;gap:.9rem;align-items:flex-start;padding:.9rem 1.1rem;border:1.5px solid var(--border);border-radius:var(--r-lg);margin-bottom:.6rem;transition:all var(--transition)}
+.cert-step.done{border-color:var(--green);background:var(--green-bg)}
+.cert-step.pending{border-color:var(--orange);background:var(--orange-bg)}
+.cert-step.locked{border-color:var(--border);background:var(--bg)}
+.cs-icon{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.csi-done{background:var(--green);color:#fff}
+.csi-pending{background:var(--orange);color:#fff}
+.csi-locked{background:var(--border2);color:var(--text4)}
+.cs-title{font-size:.875rem;font-weight:700;color:var(--text);margin-bottom:.2rem}
+.cs-desc{font-size:.78rem;color:var(--text3)}
+
+/* ── GROUPS ── */
+.group-item{
+  display:flex;align-items:center;gap:.9rem;padding:1rem 1.2rem;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);
+  cursor:pointer;transition:all var(--transition);margin-bottom:.6rem;
+}
+.group-item:hover{box-shadow:var(--shadow);border-color:var(--blue)}
+.g-icon{width:44px;height:44px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.g-name{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:.15rem}
+.g-meta{font-size:.75rem;color:var(--text4)}
+.g-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px rgba(52,199,89,.2);flex-shrink:0}
+
+/* ── NOTIF PANEL ── */
+.notif-panel{
+  position:fixed;top:var(--header-h);right:0;width:350px;
+  max-height:calc(100vh - var(--header-h));overflow-y:auto;
+  background:var(--card);border-left:1px solid var(--border);box-shadow:var(--shadow-xl);
+  z-index:300;transform:translateX(100%);transition:transform var(--transition);
+}
+.notif-panel.open{transform:translateX(0)}
+.np-head{padding:1.1rem 1.3rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.np-title{font-size:.9rem;font-weight:700}
+.notif-item{padding:.85rem 1.3rem;border-bottom:1px solid var(--border);cursor:pointer;display:flex;gap:.75rem;align-items:flex-start;transition:background var(--transition)}
+.notif-item:hover{background:var(--bg)}
+.notif-item.unread{background:var(--blue-bg)}
+.ni-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:.3rem}
+.ni-title{font-size:.83rem;font-weight:600;margin-bottom:.15rem}
+.ni-sub{font-size:.75rem;color:var(--text4)}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity var(--transition)}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-box{background:var(--card);border-radius:var(--r-2xl);width:100%;max-width:440px;box-shadow:var(--shadow-xl);transform:translateY(24px) scale(.97);transition:transform var(--transition);overflow:hidden}
+.modal-overlay.open .modal-box{transform:none}
+.modal-head{padding:1.4rem 1.75rem 0;display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-size:1.25rem;font-weight:800;letter-spacing:-.02em}
+.modal-body{padding:1.25rem 1.75rem 1.75rem}
+.modal-tabs{display:flex;background:var(--bg);border-radius:var(--r);padding:.3rem;gap:.25rem;margin:.9rem 0 1.25rem}
+.mt{flex:1;text-align:center;padding:.45rem;border-radius:var(--r-sm);font-size:.83rem;font-weight:600;color:var(--text3);cursor:pointer;transition:all var(--transition)}
+.mt.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(0,122,255,.3)}
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1.1rem}
+.role-card{border:1.5px solid var(--border);border-radius:var(--r-lg);padding:.8rem .5rem;text-align:center;cursor:pointer;transition:all var(--transition)}
+.role-card:hover{border-color:var(--blue)}
+.role-card.sel{border-color:var(--blue);background:var(--blue-bg)}
+.role-card i{font-size:1.3rem;color:var(--blue);display:block;margin-bottom:.3rem}
+.role-card span{font-size:.72rem;font-weight:600;color:var(--text3)}
+.social-row{display:flex;gap:.6rem;margin-bottom:.9rem}
+.social-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.6rem;border:1.5px solid var(--border);border-radius:var(--r);font-size:.8rem;font-weight:600;color:var(--text2);cursor:pointer;transition:all var(--transition);background:none}
+.social-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg)}
+.divider-line{display:flex;align-items:center;gap:.75rem;color:var(--text5);font-size:.75rem;margin:.9rem 0}
+.divider-line::before,.divider-line::after{content:'';flex:1;height:1px;background:var(--border)}
+.pro-notice{background:var(--orange-bg);border:1px solid rgba(255,149,0,.25);border-radius:var(--r);padding:.8rem 1rem;font-size:.8rem;color:var(--text2);margin:.9rem 0 0;display:flex;gap:.5rem}
+.pro-notice i{color:var(--orange);flex-shrink:0;margin-top:.05rem}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed;bottom:1.25rem;right:1.25rem;z-index:9999;display:flex;flex-direction:column;gap:.4rem}
+.toast{background:var(--text);color:var(--bg2);border-radius:var(--r-lg);padding:.8rem 1.2rem;display:flex;align-items:center;gap:.65rem;font-size:.83rem;font-weight:500;min-width:260px;max-width:340px;box-shadow:var(--shadow-xl);animation:slideUp .25s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.toast-icon{font-size:.9rem;flex-shrink:0}
+.ti-green{color:var(--green)}.ti-red{color:var(--red)}.ti-blue{color:var(--blue)}.ti-orange{color:var(--orange)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0!important}
+  .header{left:0!important}
+  .hamburger{display:flex}
+  .h-search{display:none}
+  .comment-layout{grid-template-columns:1fr}
+  .conv-list{display:none}
+  .hero-stats{flex-direction:column;border-radius:var(--r-xl)}
+  .h-stat{border-right:none;border-bottom:1px solid var(--border)}
+  .h-stat:last-child{border-bottom:none}
+  .releve-top{flex-direction:column}
+  .releve-info-grid{grid-template-columns:1fr}
+  .releve-summary{grid-template-columns:1fr 1fr}
+  .releve-footer{flex-direction:column;gap:1.25rem}
+}
+@media(max-width:600px){
+  .page{padding:1.25rem 1rem}
+  .feat-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .courses-grid{grid-template-columns:1fr}
+  .hero{padding:7.5rem 1rem 3rem}
+  .hero-cta{flex-direction:column;align-items:stretch}
+  .releve-summary{grid-template-columns:1fr}
+  .modal-box{max-width:100%}
+}
+</style>
 </head>
 <body>
 
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <h1>iOS Academic LMS</h1>
-        <button id="themeToggle" style="width: auto; padding: 8px 16px;">🌓 Mode</button>
-    </header>
-
-    <div class="grid">
-        <div class="glass-card">
-            <h2>Espace Enseignant / Académie</h2>
-            <form id="courseForm">
-                <input type="text" placeholder="Titre du cours" required>
-                <textarea placeholder="Description du cours"></textarea>
-                <input type="url" placeholder="Lien Vidéo (MP4 / YouTube)">
-                <input type="url" placeholder="Lien d'appel en ligne (Google Meet, Zoom)">
-                <button type="submit">Ajouter et Diffuser le Cours</button>
-            </form>
-        </div>
-
-        <div class="glass-card">
-            <h2>Vérification Compte Pro <span class="badge-pro">Requis</span></h2>
-            <p style="font-size: 14px; opacity: 0.8;">Téléversez votre diplôme ou certification pour débloquer l'ajout de cours publics.</p>
-            <form id="uploadCertifForm" enctype="multipart/form-data">
-                <input type="file" name="certification" accept=".pdf, .png, .jpg, .jpeg" required>
-                <button type="submit">Soumettre pour Approbation</button>
-            </form>
-            <div id="uploadStatus" style="margin-top: 10px; font-weight: bold;"></div>
-        </div>
-
-        <div class="glass-card">
-            <h2>Mon Évolution & Relevé de Notes</h2>
-            <div style="max-width: 100%; height: 200px;">
-                <canvas id="evolutionChart"></canvas>
-            </div>
-            <div class="ultimatum" style="margin-top: 15px;">
-                <strong>⚠️ Section Commentaire (Ultimatum Professeur) :</strong>
-                <p id="ultimatumText">Vous devez valider l'exercice d'algorithmique avant demain 16h00 sous peine de pénalité.</p>
-            </div>
-            <button onclick="window.print()" style="margin-top: 15px; background: #34c759;">Enregistrer le Relevé en PDF</button>
-        </div>
+<!-- ════════════════ MODALS ════════════════ -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="authTitle">Bienvenue sur EduVault</div>
+        <div style="font-size:.82rem;color:var(--text4);margin-top:.2rem">Votre plateforme académique</div>
+      </div>
+      <button class="btn btn-ghost btn-icon" onclick="closeModal('authModal')"><i class="fa fa-xmark"></i></button>
     </div>
+    <div class="modal-body">
+      <div class="modal-tabs">
+        <div class="mt active" onclick="authTab(this,'login')">Se connecter</div>
+        <div class="mt" onclick="authTab(this,'register')">S'inscrire</div>
+      </div>
 
-    <script>
-        // Gestion Thème Écran (Manuel + Adaptation Système native via CSS)
-        const toggleBtn = document.getElementById('themeToggle');
-        toggleBtn.addEventListener('click', () => {
-            document.body.style.background = document.body.style.background === 'rgb(0, 0, 0)' ? '#f5f5f7' : '#000000';
-        });
+      <div id="loginForm">
+        <div class="form-group"><label class="form-label">Adresse email</label><input type="email" class="form-control" placeholder="vous@exemple.com"/></div>
+        <div class="form-group"><label class="form-label">Mot de passe</label><input type="password" class="form-control" placeholder="••••••••"/></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem">
+          <label style="display:flex;align-items:center;gap:.35rem;font-size:.8rem;cursor:pointer;color:var(--text3)"><input type="checkbox"/> Se souvenir de moi</label>
+          <a href="#" style="font-size:.8rem;font-weight:600;color:var(--blue)">Mot de passe oublié ?</a>
+        </div>
+        <button class="btn btn-blue btn-full btn-lg" onclick="doLogin()"><i class="fa fa-arrow-right-to-bracket"></i> Se connecter</button>
+        <div class="divider-line">ou</div>
+        <div class="social-row">
+          <button class="social-btn"><i class="fab fa-google"></i> Google</button>
+          <button class="social-btn"><i class="fab fa-apple"></i> Apple</button>
+        </div>
+      </div>
 
-        // Envoi asynchrone AJAX (Fetch) pour la certification sans rechargement
-        document.getElementById('uploadCertifForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const statusDiv = document.getElementById('uploadStatus');
-            statusDiv.innerHTML = "Traitement en cours...";
+      <div id="registerForm" style="display:none">
+        <div class="form-label" style="margin-bottom:.5rem">Je suis...</div>
+        <div class="role-grid">
+          <div class="role-card" onclick="pickRole(this,'student')"><i class="fa fa-graduation-cap"></i><span>Étudiant</span></div>
+          <div class="role-card" onclick="pickRole(this,'teacher')"><i class="fa fa-chalkboard-user"></i><span>Professeur</span></div>
+          <div class="role-card" onclick="pickRole(this,'visitor')"><i class="fa fa-eye"></i><span>Visiteur</span></div>
+        </div>
+        <div id="proBlock" style="display:none">
+          <div style="background:var(--blue-bg);border:1px solid rgba(0,122,255,.2);border-radius:var(--r-lg);padding:1rem;margin-bottom:1rem">
+            <div style="font-size:.82rem;font-weight:700;color:var(--blue);margin-bottom:.75rem"><i class="fa fa-shield-check"></i> Vérification professionnelle requise</div>
+            <div class="cert-step done"><div class="cs-icon csi-done"><i class="fa fa-check"></i></div><div><div class="cs-title">Pièce d'identité</div><div class="cs-desc">CNI, passeport ou permis de conduire</div></div></div>
+            <div class="cert-step pending"><div class="cs-icon csi-pending"><i class="fa fa-clock"></i></div><div><div class="cs-title">Diplôme ou certification</div><div class="cs-desc">Habilitation à enseigner reconnue</div></div></div>
+            <div class="cert-step pending"><div class="cs-icon csi-pending"><i class="fa fa-file-signature"></i></div><div><div class="cs-title">Déclaration sur l'honneur</div><div class="cs-desc">Engagement à respecter la charte EduVault</div></div></div>
+            <div class="cert-step locked"><div class="cs-icon csi-locked"><i class="fa fa-hourglass-half"></i></div><div><div class="cs-title">Validation EduVault (2–5 jours)</div><div class="cs-desc">Revue du dossier par notre équipe</div></div></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div class="form-group"><label class="form-label">Prénom</label><input type="text" class="form-control" placeholder="Jean"/></div>
+          <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-control" placeholder="Dupont"/></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" placeholder="vous@exemple.com"/></div>
+        <div class="form-group"><label class="form-label">Téléphone <span style="color:var(--text5);font-weight:400">(optionnel)</span></label><input type="tel" class="form-control" placeholder="+237 6XX XXX XXX"/></div>
+        <div class="form-group"><label class="form-label">Mot de passe</label><input type="password" class="form-control" placeholder="Min. 8 caractères"/></div>
+        <div id="certUploadBlock" style="display:none">
+          <div class="form-label" style="margin-bottom:.4rem">Documents de certification</div>
+          <div class="upload-zone" style="padding:1rem">
+            <div class="upload-icon" style="font-size:1.6rem"><i class="fa fa-file-arrow-up"></i></div>
+            <div class="upload-text" style="font-size:.83rem">Glissez vos fichiers ici</div>
+            <div class="upload-sub">PDF, JPG — max 10 Mo</div>
+          </div>
+        </div>
+        <div class="pro-notice" id="proNotice" style="display:none"><i class="fa fa-circle-info"></i><span>Votre compte sera activé sous 2 à 5 jours ouvrables après vérification de vos documents.</span></div>
+        <button class="btn btn-blue btn-full btn-lg" style="margin-top:1rem" onclick="doRegister()"><i class="fa fa-user-plus"></i> Créer mon compte</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-            fetch('upload_certif.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === 'success') {
-                    statusDiv.style.color = '#34c759';
-                    statusDiv.innerHTML = data.message;
-                } else {
-                    statusDiv.style.color = '#ff3b30';
-                    statusDiv.innerHTML = data.message;
-                }
-            })
-            .catch(error => {
-                statusDiv.style.color = '#ff3b30';
-                statusDiv.innerHTML = "Erreur de communication avec le serveur.";
-            });
-        });
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toasts"></div>
 
-        // Initialisation du Graphique d'Évolution iOS Style (Pourcentages / Notes)
-        const ctx = document.getElementById('evolutionChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Éval 1', 'Éval 2', 'Éval 3', 'Éval 4'],
-                datasets: [{
-                    label: 'Progression (%)',
-                    data: [45, 60, 55, 85],
-                    borderColor: '#0071e3',
-                    borderWidth: 4,
-                    pointBackgroundColor: '#fff',
-                    pointBorderWidth: 3,
-                    tension: 0.4, // Rend la courbe fluide/liquide
-                    fill: true,
-                    backgroundColor: 'rgba(0, 113, 227, 0.1)'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { y: { min: 0, max: 100 } }
-            }
-        });
-    </script>
+<!-- NOTIF PANEL -->
+<div class="notif-panel" id="notifPanel">
+  <div class="np-head">
+    <span class="np-title">Notifications</span>
+    <button class="btn btn-ghost btn-icon btn-sm" onclick="closeNotif()"><i class="fa fa-xmark"></i></button>
+  </div>
+  <div class="notif-item unread"><div class="ni-dot"></div><div><div class="ni-title">Note publiée — INF 222</div><div class="ni-sub">Votre relevé est disponible • Il y a 2h</div></div></div>
+  <div class="notif-item unread"><div class="ni-dot"></div><div><div class="ni-title">Ultimatum — Pr. Mvogo</div><div class="ni-sub">TP à remettre avant vendredi 16h00 • Il y a 4h</div></div></div>
+  <div class="notif-item"><div class="ni-dot" style="background:transparent"></div><div><div class="ni-title">Nouveau cours — INF 242 Chap.5</div><div class="ni-sub">Topologie : Espaces métriques • Hier</div></div></div>
+  <div class="notif-item"><div class="ni-dot" style="background:transparent"></div><div><div class="ni-title">Meet dans 30 min</div><div class="ni-sub">Révision INF 232 • Aujourd'hui 14:30</div></div></div>
+</div>
+
+<!-- ════════════ LANDING ════════════ -->
+<div id="landingPage">
+  <header class="land-header">
+    <div class="sidebar-logo">
+      <div class="logo-icon">EV</div>
+      <span class="logo-text">Edu<span>Vault</span></span>
+    </div>
+    <nav class="land-nav">
+      <a href="#">Explorer</a>
+      <a href="#">Académies</a>
+      <a href="#">Professeurs</a>
+      <a href="#">Tarifs</a>
+    </nav>
+    <div class="land-actions">
+      <button class="theme-btn" onclick="toggleTheme()"><i class="fa fa-moon" id="themeIcon"></i> <span id="themeLabel">Mode sombre</span></button>
+      <button class="btn btn-outline btn-sm" onclick="openAuth('login')">Connexion</button>
+      <button class="btn btn-blue btn-sm" onclick="openAuth('register')">S'inscrire</button>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow"><i class="fa fa-star-of-life" style="font-size:.65rem"></i> Plateforme LMS · iOS Academic</div>
+    <h1 class="hero-title">Apprenez. Enseignez.<br/><span class="hl">Excellez.</span></h1>
+    <p class="hero-sub">EduVault connecte étudiants, professeurs et académies dans un écosystème complet — cours vidéo, évaluations, relevés certifiés et collaboration en temps réel.</p>
+    <div class="hero-cta">
+      <button class="btn btn-blue btn-lg" onclick="openAuth('register')"><i class="fa fa-rocket"></i> Commencer gratuitement</button>
+      <button class="btn btn-outline btn-lg" onclick="enterApp('student')"><i class="fa fa-play"></i> Voir la démo</button>
+    </div>
+    <div class="hero-stats">
+      <div class="h-stat"><div class="h-stat-num">12 000+</div><div class="h-stat-lbl">Étudiants actifs</div></div>
+      <div class="h-stat"><div class="h-stat-num">430+</div><div class="h-stat-lbl">Cours disponibles</div></div>
+      <div class="h-stat"><div class="h-stat-num">85+</div><div class="h-stat-lbl">Académies</div></div>
+      <div class="h-stat"><div class="h-stat-num">98%</div><div class="h-stat-lbl">Satisfaction</div></div>
+    </div>
+  </section>
+
+  <!-- ROLE DEMO ENTRY -->
+  <div style="background:var(--bg2);padding:4rem 2rem;text-align:center;border-top:1px solid var(--border)">
+    <div style="max-width:700px;margin:0 auto">
+      <div class="section-eyebrow" style="text-align:center">Démo interactive</div>
+      <h2 class="section-title" style="text-align:center">Essayez la plateforme maintenant</h2>
+      <p style="color:var(--text3);font-size:.9rem;margin-bottom:2rem">Choisissez votre rôle pour explorer l'interface correspondante</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem">
+        ${[
+          {role:'student',icon:'fa-graduation-cap',label:'Étudiant',desc:'Cours, notes, relevés',col:'var(--blue)'},
+          {role:'teacher',icon:'fa-chalkboard-user',label:'Professeur',desc:'Cours, évaluations, gradebook',col:'var(--green)'},
+          {role:'academy',icon:'fa-building-columns',label:'Académie',desc:'Gestion, jurys, UEs',col:'var(--purple)'},
+          {role:'visitor',icon:'fa-eye',label:'Visiteur',desc:'Explorer librement',col:'var(--orange)'},
+        ].map(r=>`
+        <button onclick="enterApp('${r.role}')" style="background:var(--card);border:1.5px solid var(--border);border-radius:var(--r-xl);padding:1.5rem 1rem;cursor:pointer;transition:all .2s;text-align:center;font-family:inherit" onmouseover="this.style.borderColor='${r.col}';this.style.boxShadow='0 4px 16px rgba(0,0,0,.08)'" onmouseout="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+          <div style="width:48px;height:48px;border-radius:14px;background:${r.col}1A;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:${r.col};margin:0 auto .75rem">
+            <i class="fa ${r.icon}"></i>
+          </div>
+          <div style="font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:.25rem">${r.label}</div>
+          <div style="font-size:.75rem;color:var(--text4)">${r.desc}</div>
+        </button>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="feat-section">
+    <div class="feat-inner">
+      <div class="section-eyebrow">Fonctionnalités</div>
+      <h2 class="section-title">Tout ce dont vous avez besoin</h2>
+      <p class="section-sub">Une plateforme pensée pour l'Afrique et le monde, inspirée d'Udemy et OpenClassrooms.</p>
+      <div class="feat-grid">
+        <div class="feat-card"><div class="feat-icon fi-blue"><i class="fa fa-video"></i></div><div class="feat-title">Cours Vidéo & Ressources</div><div class="feat-desc">Upload vidéo, liens YouTube/Vimeo/Drive. Téléchargement hors ligne sur mobile.</div></div>
+        <div class="feat-card"><div class="feat-icon fi-green"><i class="fa fa-chart-line"></i></div><div class="feat-title">Suivi & Relevés Dynamiques</div><div class="feat-desc">Graphiques d'évolution, pourcentages par UE, appréciations positives/négatives, décisions jury.</div></div>
+        <div class="feat-card"><div class="feat-icon fi-red"><i class="fa fa-comment-dots"></i></div><div class="feat-title">Commentaires & Ultimatums</div><div class="feat-desc">Messagerie directe professeur-étudiant avec ultimatums, encouragements et délais.</div></div>
+        <div class="feat-card"><div class="feat-icon fi-teal"><i class="fa fa-video-camera"></i></div><div class="feat-title">Sessions Live (Meet)</div><div class="feat-desc">Google Meet, Zoom, Teams intégrés. Planification et enregistrement des sessions.</div></div>
+        <div class="feat-card"><div class="feat-icon fi-orange"><i class="fa fa-file-pdf"></i></div><div class="feat-title">Relevés PDF Certifiés</div><div class="feat-desc">Documents confidentiels, format personnalisable, export PDF pour signature et cachet.</div></div>
+        <div class="feat-card"><div class="feat-icon fi-purple"><i class="fa fa-users"></i></div><div class="feat-title">Groupes & Collaboration</div><div class="feat-desc">Forums de groupe, partage de ressources, interaction entre pairs par promotion.</div></div>
+        <div class="feat-card"><div class="feat-icon fi-blue"><i class="fa fa-building-columns"></i></div><div class="feat-title">Gestion Académique</div><div class="feat-desc">UEs par indicatifs, jurys automatiques, notification résultats et décisions de validation.</div></div>
+        <div class="feat-card"><div class="feat-icon fi-green"><i class="fa fa-shield-halved"></i></div><div class="feat-title">Certification Pro</div><div class="feat-desc">Vérification diplôme et habilitation avant toute publication de cours publics.</div></div>
+        <div class="feat-card"><div class="feat-icon fi-orange"><i class="fa fa-moon"></i></div><div class="feat-title">iOS Design · Mode Sombre</div><div class="feat-desc">Design Apple, mode clair/sombre adaptatif, 100% responsive mobile-first.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer style="background:var(--card);border-top:1px solid var(--border);padding:2rem;text-align:center">
+    <div style="display:flex;align-items:center;justify-content:center;gap:.6rem;margin-bottom:.75rem">
+      <div class="logo-icon" style="width:28px;height:28px;font-size:.75rem">EV</div>
+      <span class="logo-text">Edu<span>Vault</span></span>
+    </div>
+    <div style="font-size:.78rem;color:var(--text4)">© 2025 EduVault LMS · Tous droits réservés · Conçu pour l'excellence académique</div>
+  </footer>
+</div>
+
+<!-- ════════════ APP SHELL ════════════ -->
+<div id="appShell" style="display:none">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo"><div class="logo-icon">EV</div><span class="logo-text">Edu<span>Vault</span></span></div>
+    </div>
+    <div class="sidebar-role-pills">
+      <div class="role-pill active" id="rp-student" onclick="switchRole('student')">Étudiant</div>
+      <div class="role-pill" id="rp-teacher" onclick="switchRole('teacher')">Prof</div>
+      <div class="role-pill" id="rp-academy" onclick="switchRole('academy')">Académie</div>
+    </div>
+    <div class="sidebar-nav" id="sidebarNav"></div>
+    <div class="sidebar-user" onclick="goTo('profile')">
+      <div class="s-avatar" id="sAvatar">D</div>
+      <div style="flex:1;min-width:0">
+        <div class="s-name" id="sName">Daniel M.</div>
+        <div class="s-role" id="sRole">Étudiant</div>
+      </div>
+      <i class="fa fa-chevron-right" style="color:var(--text5);font-size:.75rem"></i>
+    </div>
+  </nav>
+
+  <div class="main" id="mainArea">
+    <header class="header" id="appHeader">
+      <div class="header-left">
+        <button class="hamburger" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+        <div class="breadcrumb"><span class="bc-parent">EduVault</span><span class="bc-sep">/</span><span class="bc-current" id="bcCurrent">Tableau de bord</span></div>
+      </div>
+      <div class="header-right">
+        <div class="h-search"><i class="fa fa-magnifying-glass" style="color:var(--text5);font-size:.8rem"></i><input placeholder="Rechercher..."/></div>
+        <button class="h-btn" onclick="toggleNotif()"><i class="fa fa-bell"></i><div class="h-notif-dot"></div></button>
+        <button class="theme-btn" onclick="toggleTheme()"><i class="fa fa-moon" id="themeIcon2"></i></button>
+        <button class="btn btn-ghost btn-sm" onclick="goToLanding()"><i class="fa fa-arrow-left"></i></button>
+      </div>
+    </header>
+    <div class="page" id="pageContent"></div>
+  </div>
+</div>
+
+<script>
+/* ════ STATE ════ */
+let role = 'student', page = 'dashboard';
+let chartInstances = {};
+
+/* ════ THEME ════ */
+if(matchMedia('(prefers-color-scheme:dark)').matches) setTheme('dark');
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  const isDark = t==='dark';
+  ['themeIcon','themeIcon2'].forEach(id=>{const el=document.getElementById(id);if(el){el.className=isDark?'fa fa-sun':'fa fa-moon'}});
+  const lbl=document.getElementById('themeLabel');if(lbl)lbl.textContent=isDark?'Mode clair':'Mode sombre';
+  // redraw charts
+  Object.values(chartInstances).forEach(c=>{try{c.destroy()}catch(e){}});
+  chartInstances={};
+  if(page) initCharts(page);
+}
+function toggleTheme(){setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark')}
+
+/* ════ NAVIGATION ════ */
+function goToLanding(){
+  document.getElementById('landingPage').style.display='';
+  document.getElementById('appShell').style.display='none';
+}
+function enterApp(r){
+  role=r;
+  document.getElementById('landingPage').style.display='none';
+  document.getElementById('appShell').style.display='';
+  document.getElementById('notifPanel').classList.remove('open');
+  buildSidebar();
+  goTo('dashboard');
+  updateRolePills();
+}
+function switchRole(r){role=r;buildSidebar();goTo('dashboard');updateRolePills()}
+function updateRolePills(){
+  ['student','teacher','academy'].forEach(r=>{
+    const el=document.getElementById('rp-'+r);
+    if(el) el.classList.toggle('active',r===role);
+  });
+  const info={student:{name:'Daniel M.',lbl:'Étudiant',av:'D'},teacher:{name:'Pr. Martin',lbl:'Professeur',av:'P'},academy:{name:'ENSP Yaoundé',lbl:'Académie',av:'A'},visitor:{name:'Visiteur',lbl:'Visiteur',av:'V'}};
+  const i=info[role]||info.student;
+  document.getElementById('sName').textContent=i.name;
+  document.getElementById('sRole').textContent=i.lbl;
+  document.getElementById('sAvatar').textContent=i.av;
+}
+function goTo(p){
+  page=p;
+  document.getElementById('bcCurrent').textContent=pageLabel(p);
+  document.getElementById('pageContent').innerHTML=renderPage(p);
+  buildSidebar();
+  setTimeout(()=>initCharts(p),50);
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('notifPanel').classList.remove('open');
+}
+function pageLabel(p){return{dashboard:'Tableau de bord',courses:'Mes cours',explorer:'Explorer',grades:'Mes notes',transcript:'Relevé de notes',comments:'Commentaires',groups:'Groupes',meet:'Sessions Live',addcourse:'Ajouter un cours',gradebook:'Carnet de notes',videos:'Mes vidéos',academy:'Gestion académique'}[p]||p}
+
+/* ════ SIDEBAR MENUS ════ */
+function buildSidebar(){
+  const menus={
+    student:[
+      {s:'Principal'},{icon:'fa-house',l:'Tableau de bord',p:'dashboard'},
+      {icon:'fa-book-open',l:'Mes cours',p:'courses'},
+      {icon:'fa-compass',l:'Explorer',p:'explorer'},
+      {s:'Académique'},{icon:'fa-chart-bar',l:'Mes notes',p:'grades'},
+      {icon:'fa-file-lines',l:'Relevé de notes',p:'transcript'},
+      {icon:'fa-comment-dots',l:'Commentaires',p:'comments',badge:'2',bc:'red'},
+      {s:'Social'},{icon:'fa-users',l:'Groupes',p:'groups'},
+      {icon:'fa-video',l:'Sessions Live',p:'meet'},
+    ],
+    teacher:[
+      {s:'Enseignement'},{icon:'fa-house',l:'Tableau de bord',p:'dashboard'},
+      {icon:'fa-circle-plus',l:'Ajouter un cours',p:'addcourse'},
+      {icon:'fa-book-open',l:'Mes cours',p:'courses'},
+      {s:'Étudiants'},{icon:'fa-table-list',l:'Carnet de notes',p:'gradebook'},
+      {icon:'fa-comment-dots',l:'Commentaires',p:'comments',badge:'5',bc:'red'},
+      {s:'Contenu'},{icon:'fa-film',l:'Mes vidéos',p:'videos'},
+      {icon:'fa-video',l:'Sessions Live',p:'meet'},
+      {icon:'fa-users',l:'Groupes',p:'groups'},
+    ],
+    academy:[
+      {s:'Gestion'},{icon:'fa-house',l:'Tableau de bord',p:'dashboard'},
+      {icon:'fa-building-columns',l:'Académique',p:'academy'},
+      {icon:'fa-book-open',l:'Cours publiés',p:'courses'},
+      {s:'Résultats'},{icon:'fa-table-list',l:'Carnet de notes',p:'gradebook'},
+      {icon:'fa-file-lines',l:'Relevés',p:'transcript'},
+      {icon:'fa-comment-dots',l:'Commentaires',p:'comments'},
+      {s:'Communauté'},{icon:'fa-users',l:'Étudiants',p:'groups'},
+      {icon:'fa-video',l:'Sessions Live',p:'meet'},
+    ],
+    visitor:[
+      {s:'Explorer'},{icon:'fa-house',l:'Accueil',p:'dashboard'},
+      {icon:'fa-compass',l:'Explorer les cours',p:'explorer'},
+      {icon:'fa-fire',l:'Tendances',p:'courses'},
+    ],
+  };
+  const items=(menus[role]||menus.student);
+  document.getElementById('sidebarNav').innerHTML=items.map(it=>{
+    if(it.s) return `<div class="nav-section">${it.s}</div>`;
+    const active=page===it.p?'active':'';
+    const badge=it.badge?`<span class="pill ${it.bc||''}">${it.badge}</span>`:'';
+    return `<div class="nav-link ${active}" onclick="goTo('${it.p}')"><span class="icon"><i class="fa ${it.icon}"></i></span><span class="lbl">${it.l}</span>${badge}</div>`;
+  }).join('');
+}
+
+/* ════ PAGE RENDERERS ════ */
+function renderPage(p){
+  const fn={dashboard:pgDashboard,courses:pgCourses,explorer:pgExplorer,grades:pgGrades,transcript:pgTranscript,comments:pgComments,groups:pgGroups,meet:pgMeet,addcourse:pgAddCourse,gradebook:pgGradebook,videos:pgVideos,academy:pgAcademy}[p];
+  return fn?fn():`<div class="pg-header"><h1 class="pg-title">${pageLabel(p)}</h1></div><p style="color:var(--text4)">Page en cours de construction...</p>`;
+}
+
+/* ── DASHBOARD ── */
+function pgDashboard(){
+  const isT=role==='teacher', isA=role==='academy';
+  const greeting=isT?'Pr. Martin':isA?'ENSP Yaoundé':'Daniel';
+  const statsHtml=isT?`
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--blue-bg);color:var(--blue)"><i class="fa fa-users"></i></div><div class="stat-val">47</div><div class="stat-lbl">Étudiants</div><div class="stat-delta delta-up"><i class="fa fa-arrow-up" style="font-size:.65rem"></i>3 ce mois</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--green-bg);color:var(--green)"><i class="fa fa-book"></i></div><div class="stat-val">8</div><div class="stat-lbl">Cours publiés</div><div class="stat-delta delta-up"><i class="fa fa-arrow-up" style="font-size:.65rem"></i>1 ce mois</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--orange-bg);color:var(--orange)"><i class="fa fa-pen-to-square"></i></div><div class="stat-val">12</div><div class="stat-lbl">Notes à saisir</div><div class="stat-delta delta-neutral">En attente</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--red-bg);color:var(--red)"><i class="fa fa-comment"></i></div><div class="stat-val">5</div><div class="stat-lbl">Messages non lus</div></div>
+  `:isA?`
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--blue-bg);color:var(--blue)"><i class="fa fa-graduation-cap"></i></div><div class="stat-val">312</div><div class="stat-lbl">Étudiants inscrits</div><div class="stat-delta delta-up"><i class="fa fa-arrow-up" style="font-size:.65rem"></i>18 ce sem.</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--green-bg);color:var(--green)"><i class="fa fa-check-circle"></i></div><div class="stat-val">287</div><div class="stat-lbl">Admis — 91.9%</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--purple-bg);color:var(--purple)"><i class="fa fa-book"></i></div><div class="stat-val">24</div><div class="stat-lbl">UEs actives</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--orange-bg);color:var(--orange)"><i class="fa fa-chalkboard-user"></i></div><div class="stat-val">19</div><div class="stat-lbl">Professeurs</div></div>
+  `:`
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--blue-bg);color:var(--blue)"><i class="fa fa-book-open"></i></div><div class="stat-val">6</div><div class="stat-lbl">Cours suivis</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--green-bg);color:var(--green)"><i class="fa fa-check-circle"></i></div><div class="stat-val">4/6</div><div class="stat-lbl">UEs validées</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--orange-bg);color:var(--orange)"><i class="fa fa-star"></i></div><div class="stat-val">14.2</div><div class="stat-lbl">Moyenne / 20</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--red-bg);color:var(--red)"><i class="fa fa-fire"></i></div><div class="stat-val">7j</div><div class="stat-lbl">Série 🔥</div></div>
+  `;
+  return `
+<div class="pg-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
+  <div><h1 class="pg-title">Bonjour, ${greeting} 👋</h1><p class="pg-sub">${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p></div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+    ${role==='teacher'?`<button class="btn btn-outline btn-sm" onclick="goTo('addcourse')"><i class="fa fa-plus"></i> Nouveau cours</button>`:''}
+    ${role==='student'?`<button class="btn btn-blue btn-sm" onclick="goTo('transcript')"><i class="fa fa-file-pdf"></i> Mon relevé</button>`:''}
+  </div>
+</div>
+<div class="stats-grid">${statsHtml}</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem">
+  <div class="card card-pad">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem">
+      <div style="font-size:.9rem;font-weight:700">Évolution des notes</div>
+      <span class="badge badge-blue">Sem. 1</span>
+    </div>
+    <canvas id="lineChart" height="140"></canvas>
+  </div>
+  <div class="card card-pad">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem">
+      <div style="font-size:.9rem;font-weight:700">Complétion des cours</div>
+    </div>
+    <canvas id="barChart" height="140"></canvas>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:1.25rem">
+  <div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem">
+      <div style="font-size:.9rem;font-weight:700">Cours récents</div>
+      <button class="btn btn-ghost btn-sm" onclick="goTo('courses')" style="font-size:.8rem">Voir tout <i class="fa fa-arrow-right"></i></button>
+    </div>
+    <div class="courses-grid" style="grid-template-columns:1fr 1fr">${miniCourses()}</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:1rem">
+    <div class="meet-hero">
+      <div class="meet-title"><i class="fa fa-video"></i> Session Live</div>
+      <div class="meet-sub">INF 222 · Révision Graphes · 15h00</div>
+      <div class="meet-participants-row"><div class="mp">D</div><div class="mp" style="background:rgba(255,255,255,.3)">S</div><div class="mp" style="background:rgba(255,255,255,.25)">M</div><div class="mp mp-more">+8</div></div>
+      <div class="meet-btns"><button class="meet-btn-pri" onclick="toast('Connexion à Google Meet...','blue')"><i class="fa fa-video"></i> Rejoindre</button><button class="meet-btn-sec" onclick="goTo('meet')">Planifier</button></div>
+    </div>
+    <div class="card">
+      <div class="card-header" style="font-size:.85rem;font-weight:700">À venir</div>
+      <div style="padding:.75rem 1rem;display:flex;flex-direction:column;gap:.6rem">
+        ${[{l:'Examen INF 232',d:'20 Jun',t:'red'},{l:'TP INF 242',d:'22 Jun',t:'orange'},{l:'Meet Topologie',d:'18 Jun',t:'blue'}].map(e=>`<div style="display:flex;align-items:center;justify-content:space-between"><div style="font-size:.83rem;font-weight:500">${e.l}</div><span class="badge badge-${e.t}">${e.d}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+function miniCourses(){
+  return[{t:'Théorie des Graphes',c:'INF 222',p:72,col:'#007AFF'},{t:'Analyse de Données',c:'INF 232',p:45,col:'#34C759'}].map(c=>`
+  <div class="oc-course" onclick="goTo('courses')">
+    <div class="oc-thumb" style="background:linear-gradient(135deg,${c.col},${c.col}88)"><div class="oc-thumb-inner">📖</div><div class="oc-thumb-tag">${c.c}</div></div>
+    <div class="oc-body"><div class="oc-title">${c.t}</div><div class="oc-progress-wrap"><div class="oc-progress-bar"><div class="oc-progress-fill" style="width:${c.p}%"></div></div><div class="oc-progress-label">${c.p}% complété</div></div></div>
+  </div>`).join('');
+}
+
+/* ── COURSES ── */
+function pgCourses(){
+  const courses=[
+    {t:'Théorie des Graphes',c:'INF 222',p:72,col:'#007AFF',auth:'Pr. Mvogo',r:4.8,s:120,tag:'Vidéo'},
+    {t:'Analyse de Données',c:'INF 232',p:45,col:'#34C759',auth:'Pr. Biya',r:4.6,s:87,tag:'PDF'},
+    {t:'Topologie & Analyse',c:'INF 242',p:30,col:'#FF9500',auth:'Pr. Fouda',r:4.9,s:64,tag:'Vidéo'},
+    {t:'JavaScript Avancé',c:'INF 222',p:88,col:'#AF52DE',auth:'Pr. Mvogo',r:4.7,s:200,tag:'Vidéo'},
+    {t:'Statistiques Appliquées',c:'INF 232',p:15,col:'#FF3B30',auth:'Pr. Ebongue',r:4.5,s:95,tag:'Mixte'},
+    {t:'Algorithmique',c:'INF 211',p:60,col:'#5AC8FA',auth:'Pr. Kouam',r:4.8,s:150,tag:'Vidéo'},
+  ];
+  return`<div class="pg-header"><h1 class="pg-title">Mes Cours</h1><p class="pg-sub">Continuez là où vous vous êtes arrêté</p></div>
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="tab(this,'tAll')">Tous</button>
+    <button class="tab-btn" onclick="tab(this,'tProg')">En cours</button>
+    <button class="tab-btn" onclick="tab(this,'tDone')">Terminés</button>
+  </div>
+  <div id="tAll" class="tab-pane active">
+  <div class="courses-grid">${courses.map(c=>`
+  <div class="oc-course">
+    <div class="oc-thumb" style="background:linear-gradient(135deg,${c.col},${c.col}99)">
+      <div class="oc-thumb-inner">🎓</div>
+      <div class="oc-thumb-tag">${c.c}</div>
+      <div class="oc-thumb-duration"><i class="fa fa-play" style="font-size:.6rem"></i>${c.tag}</div>
+    </div>
+    <div class="oc-body">
+      <div class="oc-cat">${c.c}</div>
+      <div class="oc-title">${c.t}</div>
+      <div class="oc-author">Par ${c.auth}</div>
+      <div class="oc-progress-wrap"><div class="oc-progress-bar"><div class="oc-progress-fill" style="width:${c.p}%"></div></div><div class="oc-progress-label">${c.p}% complété</div></div>
+    </div>
+    <div class="oc-footer">
+      <div class="oc-rating"><i class="fa fa-star"></i>${c.r}</div>
+      <div class="oc-students"><i class="fa fa-users"></i> ${c.s}</div>
+      <button class="btn btn-blue btn-sm" onclick="toast('${c.p>0?'Cours repris':'Cours démarré'} !','green')">${c.p>0?'Continuer':'Commencer'}</button>
+    </div>
+  </div>`).join('')}</div></div>
+  <div id="tProg" class="tab-pane"></div>
+  <div id="tDone" class="tab-pane"></div>`;
+}
+
+/* ── EXPLORER ── */
+function pgExplorer(){
+  const items=[
+    {t:'Introduction au Machine Learning',auth:'Pr. Samba',r:4.9,s:1240,col:'#AF52DE',lv:'L3'},
+    {t:'Analyse Numérique Avancée',auth:'Pr. Fouda',r:4.7,s:430,col:'#007AFF',lv:'M1'},
+    {t:'Bases de Données Relationnelles',auth:'Pr. Nkeng',r:4.8,s:890,col:'#34C759',lv:'L2'},
+    {t:'Réseaux & Sécurité',auth:'Pr. Abouem',r:4.6,s:560,col:'#FF9500',lv:'L3'},
+    {t:'Python pour la Data Science',auth:'Pr. Bello',r:4.9,s:2100,col:'#FF3B30',lv:'Tous'},
+    {t:'Systèmes d\'Exploitation Linux',auth:'Pr. Kamga',r:4.5,s:720,col:'#5AC8FA',lv:'L2'},
+  ];
+  return`<div class="pg-header"><h1 class="pg-title">Explorer les cours</h1><p class="pg-sub">Découvrez des milliers de ressources</p></div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem">
+    ${['Tout','Informatique','Mathématiques','Physique','Langues','Data Science'].map((c,i)=>`<button class="btn btn-sm ${i===0?'btn-blue':'btn-outline'}" onclick="filterCat(this)">${c}</button>`).join('')}
+  </div>
+  <div class="courses-grid">${items.map(c=>`
+  <div class="oc-course">
+    <div class="oc-thumb" style="background:linear-gradient(135deg,${c.col},${c.col}99)">
+      <div class="oc-thumb-inner">🎓</div>
+      <div class="oc-thumb-tag">${c.lv}</div>
+    </div>
+    <div class="oc-body"><div class="oc-title">${c.t}</div><div class="oc-author">Par ${c.auth}</div></div>
+    <div class="oc-footer">
+      <div class="oc-rating"><i class="fa fa-star"></i>${c.r}</div>
+      <div class="oc-students">${c.s.toLocaleString()} inscrits</div>
+      <button class="btn btn-blue btn-sm" onclick="toast('Inscription confirmée !','green')">S'inscrire</button>
+    </div>
+  </div>`).join('')}</div>`;
+}
+
+/* ── GRADES ── */
+function pgGrades(){
+  const ues=[
+    {code:'INF 222',n:'Théorie des Graphes',note:16,cr:4,ap:'Excellent — continuez !',atype:'pos'},
+    {code:'INF 232 EC2',n:'Analyse de Données',note:13.5,cr:3,ap:'Des efforts, mais la rigueur manque.',atype:'neg'},
+    {code:'INF 242',n:'Topologie / Analyse',note:11,cr:4,ap:'Zone de risque — travaillez davantage.',atype:'neg'},
+    {code:'MAT 201',n:'Mathématiques Avancées',note:17,cr:4,ap:'Félicitations, résultat remarquable !',atype:'pos'},
+    {code:'PHY 101',n:'Physique Générale',note:14,cr:2,ap:'Bon travail général.',atype:'pos'},
+    {code:'ENG 101',n:'Anglais Technique',note:15,cr:2,ap:'Progrès notables à l\'oral.',atype:'pos'},
+  ];
+  const moy=(ues.reduce((a,u)=>a+u.note*u.cr,0)/ues.reduce((a,u)=>a+u.cr,0)).toFixed(2);
+  const cval=ues.filter(u=>u.note>=10).reduce((a,u)=>a+u.cr,0);
+  return`
+<div class="pg-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
+  <div><h1 class="pg-title">Mes Notes</h1><p class="pg-sub">Semestre 1 — 2024/2025</p></div>
+  <button class="btn btn-blue btn-sm" onclick="goTo('transcript')"><i class="fa fa-file-pdf"></i> Mon relevé</button>
+</div>
+<div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:1.5rem">
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--blue-bg);color:var(--blue)"><i class="fa fa-calculator"></i></div><div class="stat-val">${moy}</div><div class="stat-lbl">Moyenne générale</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--green-bg);color:var(--green)"><i class="fa fa-check"></i></div><div class="stat-val">${cval}/19</div><div class="stat-lbl">Crédits validés</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--orange-bg);color:var(--orange)"><i class="fa fa-trophy"></i></div><div class="stat-val">17/20</div><div class="stat-lbl">Meilleure note</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--purple-bg);color:var(--purple)"><i class="fa fa-chart-pie"></i></div><div class="stat-val">Top 15%</div><div class="stat-lbl">Rang promo</div></div>
+</div>
+<div class="card card-pad" style="margin-bottom:1.5rem">
+  <div style="font-size:.875rem;font-weight:700;margin-bottom:1rem">Évolution par évaluation</div>
+  <canvas id="gradeEvol" height="120"></canvas>
+</div>
+<div class="tbl-wrap">
+  <table class="tbl">
+    <thead><tr><th>Code</th><th>Unité d'Enseignement</th><th>Note</th><th>Crédits</th><th>Appréciation</th><th>Décision</th></tr></thead>
+    <tbody>${ues.map(u=>{const g=u.note>=16?'a':u.note>=13?'b':u.note>=10?'c':'d';return`<tr><td><code style="font-size:.8rem;font-weight:600;color:var(--blue)">${u.code}</code></td><td><strong>${u.n}</strong></td><td><span class="score-chip score-${g}">${u.note}/20</span></td><td>${u.cr} ECTS</td><td><div class="ap-chip ap-${u.atype==='pos'?'pos':'neg'}">${u.ap}</div></td><td><span class="decision-tag ${u.note>=10?'dt-pass':'dt-fail'}">${u.note>=10?'✓ Validée':'✗ Non validée'}</span></td></tr>`;}).join('')}</tbody>
+  </table>
+</div>
+<div style="padding:1rem 1.25rem;background:var(--green-bg);border:1px solid rgba(52,199,89,.2);border-radius:0 0 var(--r-xl) var(--r-xl);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem">
+  <div style="font-size:.85rem;color:#1A7A38;font-weight:600"><i class="fa fa-check-circle"></i> Jury : <strong>Admis(e) — Passage en année supérieure</strong></div>
+  <button class="btn btn-green btn-sm" onclick="goTo('transcript')"><i class="fa fa-file-pdf"></i> Télécharger relevé</button>
+</div>`;
+}
+
+/* ── TRANSCRIPT ── */
+function pgTranscript(){
+  return`
+<div class="pg-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
+  <div><h1 class="pg-title">Relevé de Notes</h1><p class="pg-sub">Document officiel certifié</p></div>
+  <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+    <button class="btn btn-outline btn-sm" onclick="toast('PDF généré !','green')"><i class="fa fa-file-pdf"></i> Export PDF</button>
+    <button class="btn btn-blue btn-sm" onclick="toast('Envoyé à l\'imprimerie campus','blue')"><i class="fa fa-print"></i> Imprimer</button>
+  </div>
+</div>
+<div class="releve-confidential"><i class="fa fa-lock"></i><span><strong>Document confidentiel</strong> — Accessible en téléchargement PDF après envoi officiel du professeur. Présentez-le au campus pour signature et cachet.</span></div>
+<div class="releve-wrap">
+  <div class="releve-top">
+    <div>
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem">
+        <div style="width:44px;height:44px;background:rgba(255,255,255,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;border:1.5px solid rgba(255,255,255,.3)">EV</div>
+        <div><div class="releve-uni">Université de Yaoundé I</div><div class="releve-subtitle">Faculté des Sciences — Département Informatique</div></div>
+      </div>
+      <div style="font-size:1.1rem;font-weight:700;letter-spacing:-.01em">RELEVÉ DE NOTES OFFICIEL</div>
+      <div style="opacity:.7;font-size:.8rem;margin-top:.2rem">Année académique 2024/2025 · Semestre 1</div>
+    </div>
+    <div class="releve-stamp">EV</div>
+  </div>
+  <div class="releve-body">
+    <div class="releve-info-grid">
+      <div><div class="ri-label">Nom et Prénom</div><div class="ri-value">MOHAMAT Daniel</div></div>
+      <div><div class="ri-label">N° Matricule</div><div class="ri-value" style="font-family:monospace">22G05312</div></div>
+      <div><div class="ri-label">Filière / Niveau</div><div class="ri-value">Informatique — Licence 2</div></div>
+      <div><div class="ri-label">Date d'émission</div><div class="ri-value">${new Date().toLocaleDateString('fr-FR')}</div></div>
+    </div>
+    <table class="releve-tbl">
+      <thead><tr><th>Indicatif</th><th>Intitulé</th><th>Crédits</th><th>Note /20</th><th>Mention</th><th>Décision</th></tr></thead>
+      <tbody>${[
+        {c:'INF 222',n:'Théorie des Graphes & JS',cr:4,note:16,m:'Très Bien'},
+        {c:'INF 232 EC2',n:'Analyse de Données',cr:3,note:13.5,m:'Bien'},
+        {c:'INF 242',n:'Topologie / Analyse Réelle',cr:4,note:11,m:'Passable'},
+        {c:'MAT 201',n:'Mathématiques Avancées',cr:4,note:17,m:'Très Bien'},
+        {c:'PHY 101',n:'Physique Générale',cr:2,note:14,m:'Bien'},
+        {c:'ENG 101',n:'Anglais Technique',cr:2,note:15,m:'Bien'},
+      ].map(u=>`<tr><td style="font-family:monospace;font-size:.78rem;font-weight:600;color:var(--blue)">${u.c}</td><td>${u.n}</td><td>${u.cr}</td><td><strong>${u.note}</strong></td><td>${u.m}</td><td><span class="decision-tag dt-pass">✓ Validée</span></td></tr>`).join('')}</tbody>
+    </table>
+    <div class="releve-summary">
+      <div class="rs-box"><div class="rs-val">14.2</div><div class="rs-lbl">Moyenne / 20</div></div>
+      <div class="rs-box"><div class="rs-val">19</div><div class="rs-lbl">Crédits ECTS</div></div>
+      <div class="rs-box" style="background:var(--green-bg)"><div class="rs-val" style="color:var(--green)">Admis(e)</div><div class="rs-lbl">Décision jury</div></div>
+    </div>
+  </div>
+  <div class="releve-footer">
+    <div class="sig-block"><div style="font-size:.78rem;font-weight:600;color:var(--text3)">Le Chef de Département</div><div class="sig-line"></div><div class="sig-lbl">Cachet & Signature</div></div>
+    <div style="text-align:center">
+      <i class="fa fa-qrcode" style="font-size:2.5rem;color:var(--border2);display:block;margin-bottom:.3rem"></i>
+      <div style="font-size:.65rem;font-family:monospace;color:var(--text5)">EV-2025-22G05312</div>
+    </div>
+    <div class="sig-block"><div style="font-size:.78rem;font-weight:600;color:var(--text3)">Le Doyen de la Faculté</div><div class="sig-line"></div><div class="sig-lbl">Cachet & Signature</div></div>
+  </div>
+</div>`;
+}
+
+/* ── COMMENTS ── */
+function pgComments(){
+  return`
+<div class="pg-header"><h1 class="pg-title">Commentaires</h1><p class="pg-sub">Section Commentaire — Conversation directe</p></div>
+<div class="comment-layout">
+  <div class="conv-list">
+    <div class="conv-list-head">Conversations</div>
+    ${[{n:'Pr. Mvogo',c:'INF 222',last:'Ultimatum actif',b:3,urgent:true},{n:'Pr. Biya',c:'INF 232',last:'Bonne continuation',b:0},{n:'Pr. Fouda',c:'INF 242',last:'Révisez les exercices',b:1}].map((c,i)=>`
+    <div class="conv-item ${i===0?'active':''}">
+      <div class="conv-av" style="${c.urgent?'background:var(--red)':''}">${c.n.split(' ')[1][0]}</div>
+      <div class="conv-info"><div class="conv-name">${c.n}</div><div class="conv-preview">${c.last}</div></div>
+      ${c.b?`<span class="conv-badge">${c.b}</span>`:''}
+    </div>`).join('')}
+  </div>
+  <div class="chat-box">
+    <div class="chat-head">
+      <div>
+        <div class="chat-title">Pr. Mvogo — INF 222 : Théorie des Graphes</div>
+        <div style="font-size:.75rem;color:var(--text4);margin-top:.1rem">En ligne · Professeur titulaire</div>
+      </div>
+      <div class="ultimatum-pill"><i class="fa fa-triangle-exclamation"></i> Ultimatum actif</div>
+    </div>
+    <div class="chat-msgs" id="chatMsgs">
+      <div class="msg"><div class="msg-av">M</div><div class="msg-bubble"><div class="msg-text ultimatum-msg"><strong><i class="fa fa-triangle-exclamation" style="color:var(--red)"></i> ULTIMATUM :</strong> Le TP de coloration de graphes doit être remis avant vendredi 20 juin à 23h59. Passé ce délai, la note 0 sera appliquée automatiquement.</div><div class="msg-meta">Pr. Mvogo · 10 juin, 09:15</div></div></div>
+      <div class="msg right"><div class="msg-av" style="background:var(--green)">D</div><div class="msg-bubble"><div class="msg-text">Bonjour Professeur, message bien reçu. Je travaille sur l'algorithme DSATUR. Je remettrai dans les délais impartis.</div><div class="msg-meta">Vous · 10 juin, 10:30</div></div></div>
+      <div class="msg"><div class="msg-av">M</div><div class="msg-bubble"><div class="msg-text">Très bien. Incluez une comparaison entre Welsh-Powell et DSATUR dans votre rapport. Bon courage !</div><div class="msg-meta">Pr. Mvogo · 10 juin, 11:00</div></div></div>
+    </div>
+    <div class="chat-input-wrap">
+      <div style="flex:1;display:flex;flex-direction:column;gap:.4rem">
+        <textarea id="chatInput" placeholder="Votre message..." rows="1"></textarea>
+        <div class="chat-input-actions">
+          <button class="btn btn-ghost btn-icon btn-sm"><i class="fa fa-paperclip"></i></button>
+          <button class="btn btn-ghost btn-icon btn-sm"><i class="fa fa-image"></i></button>
+          ${role==='teacher'?`<button class="btn btn-sm" style="background:var(--red-bg);color:var(--red);border:1px solid rgba(255,59,48,.2);font-size:.75rem" onclick="sendUltimatum()"><i class="fa fa-triangle-exclamation"></i> Envoyer ultimatum</button>`:''}
+        </div>
+      </div>
+      <button class="btn btn-blue" onclick="sendMsg()"><i class="fa fa-paper-plane"></i></button>
+    </div>
+  </div>
+</div>`;
+}
+
+/* ── GROUPS ── */
+function pgGroups(){
+  return`<div class="pg-header" style="display:flex;justify-content:space-between;align-items:center">
+  <div><h1 class="pg-title">Groupes</h1><p class="pg-sub">Interagissez avec vos camarades</p></div>
+  <button class="btn btn-blue btn-sm"><i class="fa fa-plus"></i> Créer un groupe</button>
+</div>
+${[
+  {n:'INF 222 — Groupe officiel',m:47,msg:12,icon:'💻',active:true},
+  {n:'Révisions Topologie INF 242',m:23,msg:5,icon:'∞',active:true},
+  {n:'Projet Data Analysis',m:8,msg:34,icon:'📊',active:false},
+  {n:'Algorithmique & Structures',m:61,msg:2,icon:'🔀',active:false},
+  {n:'English Tech Study Group',m:15,msg:0,icon:'🌍',active:false},
+].map(g=>`<div class="group-item" onclick="toast('Ouverture du groupe...','blue')">
+  <div class="g-icon" style="background:var(--blue-bg);font-size:1.2rem">${g.icon}</div>
+  <div style="flex:1"><div class="g-name">${g.n}</div><div class="g-meta"><i class="fa fa-users"></i> ${g.m} membres${g.msg?` · <strong>${g.msg} nouveaux messages</strong>`:''}</div></div>
+  ${g.active?`<div class="g-dot"></div>`:''}
+</div>`).join('')}`;
+}
+
+/* ── MEET ── */
+function pgMeet(){
+  return`<div class="pg-header"><h1 class="pg-title">Sessions Live</h1><p class="pg-sub">Cours en direct et réunions virtuelles</p></div>
+<div class="meet-hero" style="margin-bottom:1.5rem">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
+    <div>
+      <div style="font-size:.75rem;opacity:.6;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.08em">Prochaine session</div>
+      <div class="meet-title">Révision — Théorie des Graphes</div>
+      <div class="meet-sub">INF 222 · Aujourd'hui à 15:00 · Google Meet</div>
+      <div class="meet-participants-row"><div class="mp">D</div><div class="mp" style="background:rgba(255,255,255,.3)">S</div><div class="mp" style="background:rgba(255,255,255,.25)">M</div><div class="mp mp-more">+8</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.5rem">
+      <button class="meet-btn-pri" onclick="toast('Connexion Google Meet...','blue')"><i class="fa fa-video"></i> Rejoindre maintenant</button>
+      <button class="meet-btn-sec" onclick="toast('Lien copié !','green')"><i class="fa fa-link"></i> Copier le lien</button>
+    </div>
+  </div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+  <div>
+    <div style="font-size:.9rem;font-weight:700;margin-bottom:.9rem">Planifier une session</div>
+    <div class="card card-pad">
+      <div class="form-group"><label class="form-label">Titre de la session</label><input class="form-control" placeholder="Ex: Cours INF 222 Chap.4"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div class="form-group"><label class="form-label">Date</label><input type="date" class="form-control"/></div>
+        <div class="form-group"><label class="form-label">Heure</label><input type="time" class="form-control"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Plateforme</label><select class="form-control"><option>Google Meet</option><option>Zoom</option><option>Microsoft Teams</option><option>Jitsi Meet</option></select></div>
+      <div class="form-group"><label class="form-label">Groupes invités</label><input class="form-control" placeholder="INF 222, INF 232..."/></div>
+      <button class="btn btn-blue btn-full" onclick="toast('Session planifiée ! Étudiants notifiés.','green')"><i class="fa fa-calendar-plus"></i> Créer la session</button>
+    </div>
+  </div>
+  <div>
+    <div style="font-size:.9rem;font-weight:700;margin-bottom:.9rem">Sessions passées</div>
+    ${[{t:'INF 222 — Graphes colorés',d:'12 Jun, 14:00',dur:'1h30',rec:true},{t:'INF 232 — Régression',d:'10 Jun, 10:00',dur:'2h00',rec:true},{t:'INF 242 — Métriques',d:'8 Jun, 08:00',dur:'1h15',rec:false}].map(s=>`
+    <div class="card" style="padding:.9rem 1.1rem;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+      <div><div style="font-size:.875rem;font-weight:600">${s.t}</div><div style="font-size:.75rem;color:var(--text4)">${s.d} · ${s.dur}</div></div>
+      ${s.rec?`<button class="btn btn-outline btn-sm" onclick="toast('Téléchargement démarré...','blue')"><i class="fa fa-download"></i> Télécharger</button>`:`<span class="badge badge-gray">Non enregistré</span>`}
+    </div>`).join('')}
+  </div>
+</div>`;
+}
+
+/* ── ADD COURSE ── */
+function pgAddCourse(){
+  return`<div class="pg-header"><h1 class="pg-title">Ajouter un cours</h1><p class="pg-sub">Espace Enseignant / Académie</p></div>
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="tab(this,'tc-info')">Informations</button>
+  <button class="tab-btn" onclick="tab(this,'tc-content')">Contenu & Vidéos</button>
+  <button class="tab-btn" onclick="tab(this,'tc-eval')">Évaluation</button>
+  <button class="tab-btn" onclick="tab(this,'tc-format')">Format relevé</button>
+</div>
+<div id="tc-info" class="tab-pane active">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+    <div>
+      <div class="form-group"><label class="form-label">Titre du cours *</label><input class="form-control" placeholder="Titre du cours"/></div>
+      <div class="form-group"><label class="form-label">Code UE *</label><input class="form-control" placeholder="Ex: INF 222"/></div>
+      <div class="form-group"><label class="form-label">Description du cours</label><textarea class="form-control" placeholder="Description du cours"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div class="form-group"><label class="form-label">Niveau</label><select class="form-control"><option>Licence 1</option><option>Licence 2</option><option>Licence 3</option><option>Master 1</option><option>Master 2</option></select></div>
+        <div class="form-group"><label class="form-label">Crédits ECTS</label><input type="number" class="form-control" value="4" min="1" max="10"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Visibilité</label><select class="form-control"><option>Public — Tous les utilisateurs</option><option>Mes étudiants uniquement</option><option>Académie partenaire</option></select></div>
+    </div>
+    <div>
+      <div class="form-label" style="margin-bottom:.5rem">Image de couverture</div>
+      <div class="upload-zone" style="margin-bottom:1rem"><div class="upload-icon"><i class="fa fa-image"></i></div><div class="upload-text">Glissez une image de couverture</div><div class="upload-sub">JPG, PNG — 1280×720px recommandé</div></div>
+      <button class="btn btn-blue btn-full" onclick="tab(document.querySelectorAll('.tab-btn')[1],'tc-content')">Suivant : Contenu <i class="fa fa-arrow-right"></i></button>
+    </div>
+  </div>
+</div>
+<div id="tc-content" class="tab-pane">
+  <div style="display:flex;flex-direction:column;gap:1.25rem">
+    <div class="card card-pad">
+      <div style="font-size:.875rem;font-weight:700;margin-bottom:1rem">📹 Vidéos du cours</div>
+      <div class="upload-zone" style="margin-bottom:.9rem"><div class="upload-icon"><i class="fa fa-film"></i></div><div class="upload-text">Uploader une vidéo</div><div class="upload-sub">MP4, MOV — max 2 Go par fichier</div></div>
+      <div class="divider-line">ou ajouter un lien externe</div>
+      <div style="display:flex;gap:.6rem;margin-bottom:.9rem">
+        <select class="form-control" style="max-width:150px"><option>YouTube</option><option>Vimeo</option><option>Google Drive</option><option>Dailymotion</option><option>Autre</option></select>
+        <input class="form-control" placeholder="Lien Vidéo (MP4 / YouTube)"/>
+        <button class="btn btn-blue" onclick="toast('Vidéo ajoutée !','green')"><i class="fa fa-plus"></i></button>
+      </div>
+      ${['Chap 1 — Introduction aux graphes','Chap 2 — Welsh-Powell','Chap 3 — DSATUR'].map(v=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.55rem .85rem;background:var(--bg);border-radius:var(--r);margin-bottom:.4rem"><i class="fa fa-film" style="color:var(--blue)"></i><span style="flex:1;font-size:.85rem;font-weight:500">${v}</span><button class="btn btn-ghost btn-icon btn-sm" onclick="toast('Vidéo supprimée','orange')"><i class="fa fa-trash" style="color:var(--red)"></i></button></div>`).join('')}
+    </div>
+    <div class="card card-pad">
+      <div style="font-size:.875rem;font-weight:700;margin-bottom:1rem">🔗 Liens & Documents</div>
+      <div class="upload-zone" style="margin-bottom:.9rem"><div class="upload-icon"><i class="fa fa-file-arrow-up"></i></div><div class="upload-text">PDF, DOCX, PPTX, ZIP</div><div class="upload-sub">Max 100 Mo par fichier</div></div>
+      <div style="display:flex;gap:.6rem">
+        <input class="form-control" placeholder="Lien d'appel en ligne (Google Meet, Zoom)"/>
+        <button class="btn btn-blue" onclick="toast('Lien ajouté !','green')"><i class="fa fa-link"></i></button>
+      </div>
+    </div>
+    <button class="btn btn-blue" style="align-self:flex-start" onclick="toast('Cours publié avec succès !','green')"><i class="fa fa-rocket"></i> Ajouter et Diffuser le Cours</button>
+  </div>
+</div>
+<div id="tc-eval" class="tab-pane">
+  <div class="card card-pad">
+    <div style="font-size:.875rem;font-weight:700;margin-bottom:1rem">📝 Configuration des évaluations</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:1rem">
+      <div class="form-group"><label class="form-label">Type</label><select class="form-control"><option>Examen final</option><option>TP noté</option><option>Contrôle continu</option><option>Soutenance</option></select></div>
+      <div class="form-group"><label class="form-label">Coefficient</label><input type="number" class="form-control" value="1" min="1" max="5"/></div>
+      <div class="form-group"><label class="form-label">Noté sur</label><input type="number" class="form-control" value="20"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Note minimale de validation</label><input type="number" class="form-control" value="10" style="max-width:120px"/></div>
+    <div style="background:var(--green-bg);border:1px solid rgba(52,199,89,.2);border-radius:var(--r);padding:1rem;margin-bottom:1rem">
+      <div style="font-size:.85rem;font-weight:700;color:var(--green);margin-bottom:.3rem"><i class="fa fa-circle-check"></i> Notification automatique activée</div>
+      <div style="font-size:.8rem;color:var(--text3)">Les étudiants seront notifiés dès la saisie. Le gestionnaire peut corriger avant publication officielle.</div>
+    </div>
+    <button class="btn btn-blue" onclick="toast('Configuration sauvegardée !','green')"><i class="fa fa-save"></i> Enregistrer</button>
+  </div>
+</div>
+<div id="tc-format" class="tab-pane">
+  <div class="card card-pad">
+    <div style="font-size:.875rem;font-weight:700;margin-bottom:.4rem">📄 Format du relevé de notes</div>
+    <div style="font-size:.8rem;color:var(--text4);margin-bottom:1rem">Définissez comment vos relevés sont présentés à vos étudiants.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+      <div class="form-group"><label class="form-label">Nom institution</label><input class="form-control" placeholder="Université de Yaoundé I"/></div>
+      <div class="form-group"><label class="form-label">Logo (URL)</label><input class="form-control" placeholder="https://..."/></div>
+    </div>
+    <div class="form-label" style="margin-bottom:.5rem">Colonnes à inclure</div>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem">
+      ${['Code UE','Intitulé','Note /20','Crédit','Mention','Appréciation','Décision','Remarques'].map(c=>`<label style="display:flex;align-items:center;gap:.35rem;font-size:.8rem;cursor:pointer;color:var(--text2)"><input type="checkbox" checked/>${c}</label>`).join('')}
+    </div>
+    <div class="form-label" style="margin-bottom:.5rem">Système de mentions</div>
+    ${[['16-20','Très Bien'],['13-15','Bien'],['10-12','Passable'],['0-9','Ajourné']].map(([r,m])=>`<div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.4rem"><input class="form-control" value="${r}" style="max-width:80px"/><span style="color:var(--text4)">→</span><input class="form-control" value="${m}"/></div>`).join('')}
+    <div class="form-group" style="margin-top:.75rem"><label class="form-label">Pied de page</label><textarea class="form-control" placeholder="Ce document est délivré par..."></textarea></div>
+    <button class="btn btn-blue" onclick="toast('Format de relevé enregistré !','green')"><i class="fa fa-save"></i> Sauvegarder le format</button>
+  </div>
+</div>`;
+}
+
+/* ── GRADEBOOK ── */
+function pgGradebook(){
+  const students=[
+    {n:'MOHAMAT Daniel',m:'22G05312',tp:15,ex:16,moy:15.5},
+    {n:'NGUENO Sara',m:'22G05318',tp:12,ex:13,moy:12.5},
+    {n:'ETAME Paul',m:'22G05320',tp:8,ex:9,moy:8.5},
+    {n:'FOUDA Marie',m:'22G05325',tp:18,ex:17,moy:17.5},
+    {n:'KOUAM Eric',m:'22G05328',tp:11,ex:10,moy:10.5},
+  ];
+  return`
+<div class="pg-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
+  <div><h1 class="pg-title">Carnet de Notes</h1><p class="pg-sub">INF 222 — Théorie des Graphes</p></div>
+  <div style="display:flex;gap:.5rem">
+    <button class="btn btn-outline btn-sm"><i class="fa fa-file-import"></i> Importer CSV</button>
+    <button class="btn btn-blue btn-sm" onclick="toast('Notes publiées aux étudiants !','green')"><i class="fa fa-paper-plane"></i> Publier les notes</button>
+  </div>
+</div>
+<div class="tbl-wrap">
+  <table class="tbl">
+    <thead><tr><th>Matricule</th><th>Nom & Prénom</th><th>TP (coef 1)</th><th>Examen (coef 2)</th><th>Moyenne</th><th>Appréciation</th><th>Décision</th><th></th></tr></thead>
+    <tbody>${students.map(s=>{
+      const g=s.moy>=16?'a':s.moy>=13?'b':s.moy>=10?'c':'d';
+      const ap=s.moy>=14?'Satisfaisant':s.moy>=10?'Passable':'Insuffisant';
+      return`<tr>
+        <td><code style="font-size:.78rem;font-weight:600;color:var(--blue)">${s.m}</code></td>
+        <td><strong>${s.n}</strong></td>
+        <td><input type="number" value="${s.tp}" min="0" max="20" style="width:65px;padding:.3rem .5rem;border:1.5px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);font-weight:600;font-size:.85rem"/></td>
+        <td><input type="number" value="${s.ex}" min="0" max="20" style="width:65px;padding:.3rem .5rem;border:1.5px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);font-weight:600;font-size:.85rem"/></td>
+        <td><span class="score-chip score-${g}">${s.moy}/20</span></td>
+        <td><input class="form-control" value="${ap}" style="font-size:.78rem;padding:.28rem .6rem;max-width:180px;border-left:2.5px solid ${s.moy>=10?'var(--green)':'var(--red)'}"/></td>
+        <td><span class="decision-tag ${s.moy>=10?'dt-pass':'dt-fail'}">${s.moy>=10?'✓ Admis':'✗ Ajourné'}</span></td>
+        <td><button class="btn btn-ghost btn-icon btn-sm" onclick="toast('Message envoyé à ${s.n}','blue')"><i class="fa fa-comment"></i></button></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:.9rem 1.25rem;background:var(--bg);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r-xl) var(--r-xl);flex-wrap:wrap;gap:.5rem">
+  <div style="font-size:.82rem;color:var(--text3)">5 étudiants · Moy. classe : <strong>12.9/20</strong> · 4 admis (80%)</div>
+  <button class="btn btn-green btn-sm" onclick="toast('Notes sauvegardées','green')"><i class="fa fa-save"></i> Sauvegarder</button>
+</div>`;
+}
+
+/* ── VIDEOS ── */
+function pgVideos(){
+  return`<div class="pg-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem">
+  <div><h1 class="pg-title">Mes Vidéos</h1><p class="pg-sub">Gérez vos contenus vidéo</p></div>
+  <div style="display:flex;gap:.5rem"><button class="btn btn-outline btn-sm"><i class="fa fa-link"></i> Ajouter un lien</button><button class="btn btn-blue btn-sm"><i class="fa fa-upload"></i> Uploader</button></div>
+</div>
+<div class="video-player" style="margin-bottom:1.25rem">
+  <div class="video-placeholder">
+    <button class="video-play-btn" onclick="toast('Lecture de la vidéo...','blue')"><i class="fa fa-play" style="margin-left:3px"></i></button>
+    <div class="video-title">INF 222 — Chap.3 : Algorithme DSATUR</div>
+  </div>
+  <div class="video-controls-bar">
+    <button class="vc-btn"><i class="fa fa-play"></i></button>
+    <button class="vc-btn"><i class="fa fa-backward-step"></i></button>
+    <div class="vc-progress"><div class="vc-fill"></div></div>
+    <div class="vc-time">14:32 / 41:20</div>
+    <button class="vc-btn"><i class="fa fa-volume-high"></i></button>
+    <button class="vc-btn"><i class="fa fa-expand"></i></button>
+    <button class="vc-btn" onclick="toast('Téléchargement démarré','green')"><i class="fa fa-download"></i></button>
+  </div>
+</div>
+<div style="display:flex;flex-direction:column;gap:.5rem">
+  ${[{t:'Chap 1 — Introduction aux graphes',dur:'32:15',v:124},{t:'Chap 2 — Welsh-Powell expliqué',dur:'28:40',v:98},{t:'Chap 3 — DSATUR en pratique',dur:'41:20',v:87,active:true},{t:'Chap 4 — Exercices corrigés',dur:'55:00',v:210}].map(v=>`
+  <div class="card" style="padding:.8rem 1.1rem;${v.active?'border-color:var(--blue);background:var(--blue-bg)':''}">
+    <div style="display:flex;align-items:center;gap:.85rem">
+      <div style="width:34px;height:34px;background:${v.active?'var(--blue)':'var(--bg)'};border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center">
+        <i class="fa fa-play" style="color:${v.active?'#fff':'var(--text4)'};margin-left:2px;font-size:.75rem"></i>
+      </div>
+      <div style="flex:1"><div style="font-size:.875rem;font-weight:600;color:${v.active?'var(--blue)':'var(--text)'}">${v.t}</div><div style="font-size:.75rem;color:var(--text4)">${v.dur} · ${v.v} vues</div></div>
+      <div style="display:flex;gap:.3rem">
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="toast('Téléchargement...','blue')"><i class="fa fa-download"></i></button>
+        <button class="btn btn-ghost btn-icon btn-sm"><i class="fa fa-pen"></i></button>
+        <button class="btn btn-ghost btn-icon btn-sm"><i class="fa fa-trash" style="color:var(--red)"></i></button>
+      </div>
+    </div>
+  </div>`).join('')}
+</div>`;
+}
+
+/* ── ACADEMY ── */
+function pgAcademy(){
+  const ues=[
+    {c:'INF101',n:'Algorithmique',cr:4,ins:47,avg:13.2,pass:89,dec:'Clôturée'},
+    {c:'INF102',n:'Réseaux & Sécurité',cr:3,ins:45,avg:12.1,pass:80,dec:'Clôturée'},
+    {c:'MAT201',n:'Mathématiques L2',cr:4,ins:50,avg:11.5,pass:72,dec:'En jury'},
+    {c:'PHY101',n:'Physique Générale',cr:2,ins:48,avg:14.0,pass:94,dec:'Clôturée'},
+    {c:'ENG101',n:'Anglais Technique',cr:2,ins:50,avg:13.8,pass:92,dec:'Clôturée'},
+  ];
+  return`
+<div class="pg-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
+  <div><h1 class="pg-title">Gestion Académique</h1><p class="pg-sub">ENSP Yaoundé — Année 2024/2025</p></div>
+  <div style="display:flex;gap:.5rem">
+    <button class="btn btn-outline btn-sm" onclick="toast('Export Excel généré','green')"><i class="fa fa-file-excel"></i> Exporter</button>
+    <button class="btn btn-blue btn-sm" onclick="toast('Résultats publiés !','green')"><i class="fa fa-paper-plane"></i> Publier résultats</button>
+  </div>
+</div>
+<div class="stats-grid" style="margin-bottom:1.5rem">
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--blue-bg);color:var(--blue)"><i class="fa fa-graduation-cap"></i></div><div class="stat-val">312</div><div class="stat-lbl">Inscrits</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--green-bg);color:var(--green)"><i class="fa fa-check-circle"></i></div><div class="stat-val">287</div><div class="stat-lbl">Admis — 91.9%</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--red-bg);color:var(--red)"><i class="fa fa-times-circle"></i></div><div class="stat-val">25</div><div class="stat-lbl">Ajournés</div></div>
+  <div class="stat-card"><div class="stat-icon-wrap" style="background:var(--orange-bg);color:var(--orange)"><i class="fa fa-calculator"></i></div><div class="stat-val">12.8</div><div class="stat-lbl">Moy. promotion</div></div>
+</div>
+<div class="tbl-wrap">
+  <table class="tbl">
+    <thead><tr><th>Indicatif</th><th>Intitulé UE</th><th>Crédits</th><th>Inscrits</th><th>Moy. UE</th><th>Taux réussite</th><th>Décision jury</th><th>Actions</th></tr></thead>
+    <tbody>${ues.map(u=>`<tr>
+      <td><code style="font-size:.78rem;font-weight:700;color:var(--blue)">${u.c}</code></td>
+      <td><strong>${u.n}</strong></td>
+      <td>${u.cr} ECTS</td>
+      <td>${u.ins}</td>
+      <td><span class="score-chip ${u.avg>=14?'score-a':u.avg>=12?'score-b':'score-c'}">${u.avg}/20</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div style="flex:1;height:5px;background:var(--bg);border-radius:99px;overflow:hidden;min-width:60px"><div style="height:100%;width:${u.pass}%;background:${u.pass>=85?'var(--green)':u.pass>=70?'var(--orange)':'var(--red)'};border-radius:99px"></div></div>
+          <span style="font-size:.78rem;font-weight:700;min-width:30px">${u.pass}%</span>
+        </div>
+      </td>
+      <td><select class="form-control" style="font-size:.78rem;padding:.25rem .5rem"><option ${u.dec==='Clôturée'?'selected':''}>Clôturée</option><option ${u.dec==='En jury'?'selected':''}>En jury</option><option>Session 2</option></select></td>
+      <td><button class="btn btn-ghost btn-icon btn-sm" onclick="toast('Détail UE '+e.c,'blue')"><i class="fa fa-eye"></i></button></td>
+    </tr>`).join('')}</tbody>
+  </table>
+</div>`;
+}
+
+/* ════ CHARTS ════ */
+function initCharts(p){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const gridColor=isDark?'rgba(255,255,255,.07)':'rgba(0,0,0,.06)';
+  const textColor=isDark?'#8E8E93':'#636366';
+  const defaults={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:gridColor},ticks:{color:textColor,font:{size:11}}},y:{grid:{color:gridColor},ticks:{color:textColor,font:{size:11}}}}};
+
+  if(p==='dashboard'){
+    const lc=document.getElementById('lineChart');
+    if(lc&&!chartInstances.line){
+      chartInstances.line=new Chart(lc,{type:'line',data:{labels:['Éval 1','Éval 2','Éval 3','Éval 4'],datasets:[{data:[42,61,58,85],borderColor:'#007AFF',backgroundColor:'rgba(0,122,255,.08)',tension:.4,pointBackgroundColor:'#007AFF',pointRadius:4,fill:true}]},options:{...defaults,scales:{x:{grid:{color:gridColor},ticks:{color:textColor,font:{size:11}}},y:{min:0,max:100,grid:{color:gridColor},ticks:{color:textColor,font:{size:11}}}}}});
+    }
+    const bc=document.getElementById('barChart');
+    if(bc&&!chartInstances.bar){
+      chartInstances.bar=new Chart(bc,{type:'bar',data:{labels:['INF 222','INF 232','INF 242','MAT 201','PHY 101'],datasets:[{data:[72,45,30,85,70],backgroundColor:['rgba(0,122,255,.8)','rgba(52,199,89,.8)','rgba(255,149,0,.8)','rgba(175,82,222,.8)','rgba(90,200,250,.8)'],borderRadius:6}]},options:{...defaults,scales:{x:{grid:{display:false},ticks:{color:textColor,font:{size:10}}},y:{min:0,max:100,grid:{color:gridColor},ticks:{color:textColor,font:{size:11}}}}}});
+    }
+  }
+  if(p==='grades'){
+    const ge=document.getElementById('gradeEvol');
+    if(ge&&!chartInstances.gradeEvol){
+      chartInstances.gradeEvol=new Chart(ge,{type:'line',data:{labels:['CC1','CC2','TP1','TP2','Exam'],datasets:[
+        {label:'INF 222',data:[14,15,16,15.5,16],borderColor:'#007AFF',tension:.4,pointRadius:3,fill:false},
+        {label:'INF 232',data:[12,11,13,14,13.5],borderColor:'#34C759',tension:.4,pointRadius:3,fill:false},
+        {label:'INF 242',data:[10,9,11,10,11],borderColor:'#FF9500',tension:.4,pointRadius:3,fill:false},
+      ]},options:{...defaults,plugins:{legend:{display:true,labels:{color:textColor,font:{size:11},boxWidth:12}}}}});
+    }
+  }
+}
+
+/* ════ UI HELPERS ════ */
+function tab(el,panelId){
+  el.closest('.tabs-bar').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  const panel=document.getElementById(panelId);
+  if(panel) panel.classList.add('active');
+}
+function filterCat(el){el.closest('div').querySelectorAll('.btn').forEach(b=>{b.classList.remove('btn-blue');b.classList.add('btn-outline')});el.classList.remove('btn-outline');el.classList.add('btn-blue')}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
+function toggleNotif(){document.getElementById('notifPanel').classList.toggle('open')}
+function closeNotif(){document.getElementById('notifPanel').classList.remove('open')}
+function sendMsg(){const i=document.getElementById('chatInput');if(!i?.value.trim())return;toast('Message envoyé','blue');i.value=''}
+function sendUltimatum(){toast('Ultimatum envoyé à l\'étudiant','orange')}
+
+/* ════ AUTH ════ */
+function openAuth(t){
+  document.getElementById('authModal').classList.add('open');
+  const tabs=document.querySelectorAll('.mt');
+  if(t==='register'){switchAuthTab(tabs[1],'register')}else{switchAuthTab(tabs[0],'login')}
+}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function authTab(el,t){
+  document.querySelectorAll('.mt').forEach(m=>m.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('loginForm').style.display=t==='login'?'':'none';
+  document.getElementById('registerForm').style.display=t==='register'?'':'none';
+}
+function switchAuthTab(el,t){authTab(el,t)}
+function pickRole(el,r){
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  const isPro=r==='teacher'||r==='academy';
+  document.getElementById('proBlock').style.display=isPro?'':'none';
+  document.getElementById('certUploadBlock').style.display=isPro?'':'none';
+  document.getElementById('proNotice').style.display=isPro?'flex':'none';
+  role=r;
+}
+function doLogin(){closeModal('authModal');enterApp(role||'student');toast('Connexion réussie — Bienvenue sur EduVault 👋','green')}
+function doRegister(){closeModal('authModal');enterApp(role||'student');toast(role==='teacher'||role==='academy'?'Dossier soumis — Vérification sous 2-5 jours ouvrables':'Compte créé avec succès — Bienvenue 🎉','green')}
+
+/* ════ TOASTS ════ */
+function toast(msg,type='blue'){
+  const icons={green:'fa-check-circle',red:'fa-xmark-circle',blue:'fa-circle-info',orange:'fa-triangle-exclamation'};
+  const t=document.createElement('div');
+  t.className='toast';
+  t.innerHTML=`<i class="fa ${icons[type]||'fa-circle-info'} toast-icon ti-${type}"></i><span>${msg}</span>`;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(8px)';t.style.transition='.2s ease';setTimeout(()=>t.remove(),200)},3200);
+}
+
+/* CLOSE ON OVERLAY */
+document.getElementById('authModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal('authModal')});
+document.addEventListener('click',e=>{if(!e.target.closest('#notifPanel')&&!e.target.closest('.h-btn'))closeNotif()});
+</script>
 </body>
 </html>
