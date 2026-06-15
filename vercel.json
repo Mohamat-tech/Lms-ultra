@@ -5,7 +5,9 @@
     }
   },
   "routes": [
-    { "src": "/upload_certif.php", "dest": "api/upload_certif.php" },
-    { "src": "/(.*)", "dest": "/$1" }
+    {
+      "src": "/api/upload_certif.php",
+      "dest": "/api/upload_certif.php"
+    }
   ]
 }
